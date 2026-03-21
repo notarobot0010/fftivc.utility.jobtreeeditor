@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="fftivc.utility.jobtreeeditor.cli/fftivc.utility.jobtreeeditor.cli.csproj" />
+  <Project Path="fftivc.utility.jobtreeeditor.uib/fftivc.utility.jobtreeeditor.uib.csproj" Id="83e5eafa-2e9c-4172-a17a-ff6d65f1ba80" />
+</Solution>
