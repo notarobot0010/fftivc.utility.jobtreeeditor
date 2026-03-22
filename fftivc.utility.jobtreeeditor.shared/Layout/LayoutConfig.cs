@@ -49,13 +49,13 @@ public class LayoutConfig
                 Name = rec.Name,
                 Position = new LayoutPosition { X = pos.X, Y = pos.Y },
                 Comment = rec.Comment,
-                RequiredJobExp = new List<int>(rec.RequiredJobExp),
-                Prerequisites = rec.Prerequisites.Select(p => new LayoutPrerequisite
+                RequiredJobExp = [.. rec.RequiredJobExp],
+                Prerequisites = [.. rec.Prerequisites.Select(p => new LayoutPrerequisite
                 {
                     JobKey = (int)p.RequiredJobId,
                     Level = p.RequiredLevel,
                     RequirementPosition = p.LevelRequirementPosition,
-                }).ToList(),
+                })],
                 RightNeighbor = (int)rec.RightNeighbor,
                 DownNeighbor = (int)rec.DownNeighbor,
                 LeftNeighbor = (int)rec.LeftNeighbor,
