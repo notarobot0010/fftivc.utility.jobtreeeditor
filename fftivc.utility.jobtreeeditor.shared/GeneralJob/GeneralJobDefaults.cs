@@ -1,6 +1,6 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿using fftivc.utility.jobtreeeditor.shared.Enums;
 
-namespace fftivc.utility.jobtreeeditor.generaljob;
+namespace fftivc.utility.jobtreeeditor.shared.GeneralJob;
 
 /// <summary>
 /// Default GeneralJob data
@@ -16,26 +16,26 @@ public class GeneralJobDefaults
     {
         return
         [
-            DefaultSquire,
-            DefaultChemist,
-            DefaultKnight,
-            DefaultArcher,
-            DefaultMonk,
-            DefaultWhiteMage ,
-            DefaultBlackMage,
-            DefaultTimeMage,
-            DefaultSummoner,
-            DefaultThief,
-            DefaultOrator,
-            DefaultMystic,
-            DefaultGeomancer,
-            DefaultDragoon,
-            DefaultSamurai,
-            DefaultNinja,
-            DefaultArithmetician,
-            DefaultBard,
-            DefaultDancer,
-            DefaultMime,
+            DefaultSquire.Clone(),
+            DefaultChemist.Clone(),
+            DefaultKnight.Clone(),
+            DefaultArcher.Clone(),
+            DefaultMonk.Clone(),
+            DefaultWhiteMage.Clone() ,
+            DefaultBlackMage.Clone(),
+            DefaultTimeMage.Clone(),
+            DefaultSummoner.Clone(),
+            DefaultThief.Clone(),
+            DefaultOrator.Clone(),
+            DefaultMystic.Clone(),
+            DefaultGeomancer.Clone(),
+            DefaultDragoon.Clone(),
+            DefaultSamurai.Clone(),
+            DefaultNinja.Clone(),
+            DefaultArithmetician.Clone(),
+            DefaultBard.Clone(),
+            DefaultDancer.Clone(),
+            DefaultMime.Clone(),
         ];
 
     }

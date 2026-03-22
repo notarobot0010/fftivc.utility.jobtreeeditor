@@ -1,12 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace fftivc.utility.jobtreeeditor.uib;
+namespace fftivc.utility.jobtreeeditor.shared.Layout;
 
-public class LayoutEntry
+public class LayoutPosition
 {
-    [JsonPropertyName("job")]
-    public string Job { get; set; } = "";
-
     [JsonPropertyName("x")]
     public int X { get; set; }
 

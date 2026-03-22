@@ -1,4 +1,4 @@
-﻿namespace fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿namespace fftivc.utility.jobtreeeditor.shared.Enums;
 
 /// <summary>
 /// GeneralJob key values mapped to English names.

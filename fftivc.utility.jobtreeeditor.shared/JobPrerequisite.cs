@@ -1,6 +1,6 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿using fftivc.utility.jobtreeeditor.shared.Enums;
 
-namespace fftivc.utility.jobtreeeditor.generaljob;
+namespace fftivc.utility.jobtreeeditor.shared;
 
 /// <summary>
 /// A single prerequisite requirement: a job at a certain level, displayed in a certain position.

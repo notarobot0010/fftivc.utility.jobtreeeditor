@@ -1,4 +1,4 @@
-﻿namespace fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿namespace fftivc.utility.jobtreeeditor.shared.Enums;
 
 /// <summary>
 /// Controls where the level requirement label is displayed relative to the job sprite.

@@ -1,6 +1,6 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob;
-using fftivc.utility.jobtreeeditor.generaljob.Enums;
-using fftivc.utility.jobtreeeditor.uib;
+﻿using fftivc.utility.jobtreeeditor.shared;
+using fftivc.utility.jobtreeeditor.shared.Enums;
+using fftivc.utility.jobtreeeditor.shared.GeneralJob;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +20,8 @@ public partial class GeneralJobEditorControl : UserControl
 
     /// <summary>Raised when any data changes, so MainWindow can track unsaved state.</summary>
     public event Action? DataChanged;
+
+    public List<GeneralJobRecord> GetRecords() => _records;
 
     public GeneralJobEditorControl()
     {
@@ -60,7 +62,7 @@ public partial class GeneralJobEditorControl : UserControl
         RefreshViewModels();
     }
 
-    private void RefreshViewModels()
+    public void RefreshViewModels()
     {
         _viewModels.Clear();
         foreach (var rec in _records)
@@ -73,7 +75,10 @@ public partial class GeneralJobEditorControl : UserControl
         GjJobSelector.ItemsSource = _viewModels;
 
         if (_viewModels.Count > 0)
+        {
             GjJobSelector.SelectedIndex = 0;
+            PopulateEditFields(_viewModels[0]);
+        }
     }
 
     #region Selection Sync

@@ -1,6 +1,7 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿using fftivc.utility.jobtreeeditor.shared.Enums;
+using fftivc.utility.jobtreeeditor.shared.GeneralJob;
 
-namespace fftivc.utility.jobtreeeditor.generaljob;
+namespace fftivc.utility.jobtreeeditor.shared;
 
 /// <summary>
 /// Calculates D-pad cursor neighbors based job swaps.

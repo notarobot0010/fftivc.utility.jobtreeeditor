@@ -130,9 +130,51 @@
                         </DataGrid.ColumnHeaderStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Required Job" Binding="{Binding RequiredJobDisplay}" Width="160" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Level" Binding="{Binding RequiredLevel}" Width="60"/>
-                            <DataGridTextColumn Header="Label Position" Binding="{Binding PositionDisplay}" Width="120" IsReadOnly="True"/>
+                            <DataGridTemplateColumn Header="Required Job" Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RequiredJobDisplay}" Padding="4,2"
+                                            Foreground="{DynamicResource TextPrimary}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding RequiredJobIndex, UpdateSourceTrigger=PropertyChanged}"
+                                            ItemsSource="{Binding JobOptions}"
+                                            IsDropDownOpen="True"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Level" Width="60">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RequiredLevel}" Padding="4,2"
+                                            Foreground="{DynamicResource TextPrimary}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding RequiredLevel, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Label Position" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding PositionDisplay}" Padding="4,2"
+                                            Foreground="{DynamicResource TextPrimary}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding PositionIndex, UpdateSourceTrigger=PropertyChanged}"
+                                            ItemsSource="{Binding PositionOptions}"
+                                            IsDropDownOpen="True"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
 

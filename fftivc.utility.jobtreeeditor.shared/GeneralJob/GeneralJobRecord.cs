@@ -1,6 +1,6 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿using fftivc.utility.jobtreeeditor.shared.Enums;
 
-namespace fftivc.utility.jobtreeeditor.generaljob;
+namespace fftivc.utility.jobtreeeditor.shared.GeneralJob;
 
 /// <summary>
 /// Complete GeneralJob record for one job class.

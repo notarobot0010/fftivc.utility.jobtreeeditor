@@ -1,4 +1,5 @@
-﻿using fftivc.utility.jobtreeeditor.uib;
+﻿using fftivc.utility.jobtreeeditor.shared.Layout;
+using fftivc.utility.jobtreeeditor.uib;
 
 namespace fftivc.utility.jobtreeeditor.cli;
 
@@ -66,7 +67,7 @@ public class Commands
 
             Console.WriteLine($"Applying layout \"{config.Name}\" to {inputPath}...");
 
-            var (applied, skipped) = config.ApplyTo(uib);
+            var (applied, skipped) = config.Apply(uib, []);
             uib.Save(outputPath);
 
             Console.WriteLine($"Applied {applied.Count} positions. Saved to: {outputPath}");
@@ -107,9 +108,9 @@ public class Commands
         try
         {
             var uib = new JobTreeUib(inputPath);
-            var config = LayoutConfig.FromUibFile(uib, "Exported from " + Path.GetFileName(inputPath));
+            var config = LayoutConfig.Export(uib, [], "Exported from " + Path.GetFileName(inputPath));
             config.SaveToFile(jsonPath);
-            Console.WriteLine($"Exported {config.Positions.Count} positions to: {jsonPath}");
+            Console.WriteLine($"Exported {config.Jobs.Count} jobs to: {jsonPath}");
             return 0;
         }
         catch (Exception ex)
@@ -128,7 +129,7 @@ public class Commands
 
         try
         {
-            var config = LayoutConfig.FromDefaults();
+            var config = LayoutConfig.ExportDefaults();
             config.SaveToFile(jsonPath);
             Console.WriteLine($"Default positions exported to: {jsonPath}");
             return 0;

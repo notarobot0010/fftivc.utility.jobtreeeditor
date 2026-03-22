@@ -1,4 +1,4 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob;
+﻿using fftivc.utility.jobtreeeditor.shared.GeneralJob;
 
 namespace fftivc.utility.jobtreeeditor.gui;
 

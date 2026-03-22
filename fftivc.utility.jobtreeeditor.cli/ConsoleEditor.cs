@@ -1,4 +1,5 @@
-﻿using fftivc.utility.jobtreeeditor.uib;
+﻿using fftivc.utility.jobtreeeditor.shared.Layout;
+using fftivc.utility.jobtreeeditor.uib;
 
 namespace fftivc.utility.jobtreeeditor.cli;
 
@@ -203,7 +204,7 @@ public class ConsoleEditor(JobTreeUib uib, string outputPath)
 
         try
         {
-            var config = LayoutConfig.FromUibFile(_uib, name);
+            var config = LayoutConfig.Export(_uib, [], name);
             config.SaveToFile(path);
             PrintSuccess($"Layout exported to: {path}");
         }
@@ -229,13 +230,13 @@ public class ConsoleEditor(JobTreeUib uib, string outputPath)
             Console.WriteLine($"  Layout: \"{config.Name}\"");
             if (!string.IsNullOrEmpty(config.Description))
                 Console.WriteLine($"  Description: {config.Description}");
-            Console.WriteLine($"  Contains {config.Positions.Count} position(s).");
+            Console.WriteLine($"  Contains {config.Jobs.Count} job(s).");
             Console.Write("  Apply this layout? [y/N]: ");
 
             string? confirm = Console.ReadLine()?.Trim().ToLower();
             if (confirm != "y") return;
 
-            var (applied, skipped) = config.ApplyTo(_uib);
+            var (applied, skipped) = config.Apply(_uib, []);
             _hasUnsavedChanges = true;
 
             PrintSuccess($"Applied {applied.Count} position(s).");

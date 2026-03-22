@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace fftivc.utility.jobtreeeditor.uib;
+﻿namespace fftivc.utility.jobtreeeditor.uib;
 
 /// <summary>
 /// Static definition of a job slot in the UIB file.

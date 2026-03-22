@@ -1,4 +1,5 @@
-﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+﻿using fftivc.utility.jobtreeeditor.shared.Enums;
+using fftivc.utility.jobtreeeditor.shared.Layout;
 using fftivc.utility.jobtreeeditor.uib;
 using Microsoft.Win32;
 using System.IO;
@@ -76,6 +77,38 @@ public partial class MainWindow : Window
         }
     }
 
+    private void GenerateSql_Click(object sender, RoutedEventArgs e)
+    {
+        string sql = GeneralJobEditor.GenerateSql();
+
+        if (string.IsNullOrEmpty(sql))
+        {
+            MessageBox.Show("No GeneralJob changes to export.", "No Changes",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var dlg = new SaveFileDialog
+        {
+            Title = "Save SQL Script",
+            Filter = "SQL files (*.sql)|*.sql|All files (*.*)|*.*",
+            FileName = "generaljob_edits.sql",
+        };
+
+        if (dlg.ShowDialog() != true) return;
+
+        try
+        {
+            File.WriteAllText(dlg.FileName, sql);
+            SetStatus($"SQL exported to {dlg.FileName}");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to save SQL:\n{ex.Message}", "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private void Save_Click(object sender, RoutedEventArgs e)
     {
         var uib = JobTreeEditor.GetUibFile();
@@ -93,17 +126,6 @@ public partial class MainWindow : Window
         {
             uib.Save(outputPath);
             _hasUnsavedChanges = false;
-            string sql = GeneralJobEditor.GenerateSql();
-            if (!string.IsNullOrEmpty(sql))
-            {
-                string sqlPath = Path.ChangeExtension(outputPath, ".sql");
-                File.WriteAllText(sqlPath, sql);
-                SetStatus($"Saved UIB to {outputPath} and SQL to {sqlPath}");
-            }
-            else
-            {
-                SetStatus($"Saved to {outputPath} (no GeneralJob changes).");
-            }
             SetStatus($"Saved to {outputPath}");
         }
         catch (Exception ex)
@@ -136,14 +158,17 @@ public partial class MainWindow : Window
         try
         {
             var config = LayoutConfig.LoadFromFile(dlg.FileName);
-
+            var records = GeneralJobEditor.GetRecords();
+            
             var result = MessageBox.Show(
-                $"Apply layout \"{config.Name}\"?\n{config.Positions.Count} positions defined.",
+                $"Apply layout \"{config.Name}\"?\n{config.Jobs.Count} positions defined.",
                 "Confirm Load", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
 
-            var (applied, skipped) = config.ApplyTo(uib);
+            var (applied, skipped) = config.Apply(uib, records);
+
             JobTreeEditor.ApplyLayout();
+            GeneralJobEditor.RefreshViewModels();
 
             string msg = $"Applied {applied.Count} positions.";
             if (skipped.Count > 0)
@@ -177,7 +202,8 @@ public partial class MainWindow : Window
 
         try
         {
-            var config = LayoutConfig.FromUibFile(uib, "Exported Layout");
+            var records = GeneralJobEditor.GetRecords();
+            var config = LayoutConfig.Export(uib, records, "Exported Layout");
             config.SaveToFile(dlg.FileName);
             SetStatus($"Layout exported to {dlg.FileName}");
         }

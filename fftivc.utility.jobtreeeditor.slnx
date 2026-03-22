@@ -4,7 +4,7 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="fftivc.utility.jobtreeeditor.cli/fftivc.utility.jobtreeeditor.cli.csproj" />
-  <Project Path="fftivc.utility.jobtreeeditor.generaljob/fftivc.utility.jobtreeeditor.generaljob.csproj" Id="b441a85e-6310-4118-99a5-74ca58f45ce6" />
   <Project Path="fftivc.utility.jobtreeeditor.gui/fftivc.utility.jobtreeeditor.gui.csproj" Id="566e04de-52e2-4bfa-9d92-9cd0116e9c6c" />
+  <Project Path="fftivc.utility.jobtreeeditor.shared/fftivc.utility.jobtreeeditor.shared.csproj" Id="c8df2b4f-52c8-45fd-b473-cac90a4efc64" />
   <Project Path="fftivc.utility.jobtreeeditor.uib/fftivc.utility.jobtreeeditor.uib.csproj" Id="83e5eafa-2e9c-4172-a17a-ff6d65f1ba80" />
 </Solution>

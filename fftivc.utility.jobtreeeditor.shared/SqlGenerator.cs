@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using fftivc.utility.jobtreeeditor.shared.GeneralJob;
+using System.Text;
 
-namespace fftivc.utility.jobtreeeditor.generaljob;
+namespace fftivc.utility.jobtreeeditor.shared;
 
 /// <summary>
 /// Generates SQL UPDATE scripts for modified GeneralJob records.
