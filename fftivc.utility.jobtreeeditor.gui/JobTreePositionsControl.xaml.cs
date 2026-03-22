@@ -15,6 +15,7 @@ public partial class JobTreePositionsControl : UserControl
 
     public event Action? DataChanged;
     public event Action<string>? StatusMessage;
+    public event Action<int, int>? JobsSwapped;
 
     public JobTreeUib? GetUibFile() => _uib;
     public int JobCount() => _jobs.Count;
@@ -157,6 +158,7 @@ public partial class JobTreePositionsControl : UserControl
         PopulateEditFields(sourceVm);
         MarkChanged();
 
+        JobsSwapped?.Invoke(sourceVm.Slot.GeneralJobKey, targetVm.Slot.GeneralJobKey);
         StatusMessage?.Invoke($"Swapped {sourceVm.Name} ({sourceVm.X}, {sourceVm.Y}) ↔ {targetVm.Name} ({targetVm.X}, {targetVm.Y}).");
     }
     #endregion

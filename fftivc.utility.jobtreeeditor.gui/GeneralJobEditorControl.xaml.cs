@@ -21,9 +21,6 @@ public partial class GeneralJobEditorControl : UserControl
     /// <summary>Raised when any data changes, so MainWindow can track unsaved state.</summary>
     public event Action? DataChanged;
 
-    /// <summary>Reference to the UIB file for neighbor calculation.</summary>
-    public JobTreeUib? UibFile { get; set; }
-
     public GeneralJobEditorControl()
     {
         InitializeComponent();
@@ -121,6 +118,20 @@ public partial class GeneralJobEditorControl : UserControl
     #endregion
 
     #region Edit Actions
+    public void OnJobsSwapped(Job jobA, Job jobB)
+    {
+        NeighborCalculator.SwapNeighborReferences(_records, jobA, jobB);
+
+        foreach (var vm in _viewModels)
+            vm.Refresh();
+        GjGrid.Items.Refresh();
+
+        if (GjJobSelector.SelectedItem is GeneralJobViewModel selected)
+            PopulateEditFields(selected);
+
+        DataChanged?.Invoke();
+    }
+
     private void ApplyChanges_Click(object sender, RoutedEventArgs e)
     {
         if (GjJobSelector.SelectedItem is not GeneralJobViewModel vm) return;
@@ -173,21 +184,25 @@ public partial class GeneralJobEditorControl : UserControl
             _prereqViewModels.Remove(pvm);
     }
 
-    private void CalculateNeighbors_Click(object sender, RoutedEventArgs e)
+    private void ResetNeighbors_Click(object sender, RoutedEventArgs e)
     {
-        if (UibFile == null)
-        {
-            MessageBox.Show("Load a UIB file first (on the Job Tree Positions tab).",
-                "No UIB Loaded", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
+        var result = MessageBox.Show(
+            "Reset all cursor neighbors to their default values?\nThis will not affect prerequisites or other fields.",
+            "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (result != MessageBoxResult.Yes) return;
 
-        var positions = NeighborCalculator.BuildPositionMap(UibFile);
-        NeighborCalculator.Calculate(_records, positions);
+        var defaults = GeneralJobDefaults.CreateDefaults();
+        foreach (var rec in _records)
+        {
+            var def = defaults.First(d => d.Key == rec.Key);
+            rec.RightNeighbor = def.RightNeighbor;
+            rec.DownNeighbor = def.DownNeighbor;
+            rec.LeftNeighbor = def.LeftNeighbor;
+            rec.UpNeighbor = def.UpNeighbor;
+        }
 
         foreach (var vm in _viewModels)
             vm.Refresh();
-
         GjGrid.Items.Refresh();
 
         if (GjJobSelector.SelectedItem is GeneralJobViewModel selected)

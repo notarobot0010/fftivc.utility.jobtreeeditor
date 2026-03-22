@@ -1,4 +1,5 @@
-﻿using fftivc.utility.jobtreeeditor.uib;
+﻿using fftivc.utility.jobtreeeditor.generaljob.Enums;
+using fftivc.utility.jobtreeeditor.uib;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
@@ -19,6 +20,11 @@ public partial class MainWindow : Window
         GeneralJobEditor.DataChanged += () => { _hasUnsavedChanges = true; };
 
         JobTreeEditor.StatusMessage += msg => SetStatus(msg);
+
+        JobTreeEditor.JobsSwapped += (keyA, keyB) =>
+        {
+            GeneralJobEditor.OnJobsSwapped((Job)keyA, (Job)keyB);
+        };
 
         OutputPathBox.Text = Path.Combine(".", "output", "ffto_job_tree.uib");
         
@@ -58,7 +64,6 @@ public partial class MainWindow : Window
         {
             var uib = new JobTreeUib(path);
             JobTreeEditor.LoadUib(uib);
-            GeneralJobEditor.UibFile = uib;
             InputPathBox.Text = path;
             _hasUnsavedChanges = false;
 

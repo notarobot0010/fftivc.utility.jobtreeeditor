@@ -22,7 +22,7 @@ public class GeneralJobRecord
     /// <summary>Experience thresholds per level. Default is: [0,100,200,400,700,1100,1600,2200,3000].</summary>
     public List<int> RequiredJobExp { get; set; } = [];
 
-    /// <summary>Prerequisite sets (parallel arrays zipped together).</summary>
+    /// <summary>Prerequisite sets (parallel arrays: Job, Level, RequirementPosition).</summary>
     public List<JobPrerequisite> Prerequisites { get; set; } = [];
 
     /// <summary>D-pad right neighbor (20/None = no neighbor).</summary>
