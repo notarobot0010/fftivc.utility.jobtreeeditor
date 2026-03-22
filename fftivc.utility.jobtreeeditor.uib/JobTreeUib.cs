@@ -3,12 +3,12 @@
 /// <summary>
 /// Handles reading and writing job positions in the UIB binary file.
 /// </summary>
-public class JobTreeUibEditor
+public class JobTreeUib
 {
     private byte[] _data;
     public string SourcePath { get; }
 
-    public JobTreeUibEditor(string path)
+    public JobTreeUib(string path)
     {
         SourcePath = path;
         _data = File.ReadAllBytes(path);
@@ -18,7 +18,7 @@ public class JobTreeUibEditor
     /// <summary>
     /// Create from raw bytes (e.g. for testing).
     /// </summary>
-    public JobTreeUibEditor(byte[] data, string sourcePath = "<memory>")
+    public JobTreeUib(byte[] data, string sourcePath = "<memory>")
     {
         _data = (byte[])data.Clone();
         SourcePath = sourcePath;

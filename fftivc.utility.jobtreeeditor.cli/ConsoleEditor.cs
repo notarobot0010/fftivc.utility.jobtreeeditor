@@ -5,9 +5,9 @@ namespace fftivc.utility.jobtreeeditor.cli;
 /// <summary>
 /// Interactive console interface for editing job tree positions.
 /// </summary>
-public class ConsoleEditor(JobTreeUibEditor uib, string outputPath)
+public class ConsoleEditor(JobTreeUib uib, string outputPath)
 {
-    private readonly JobTreeUibEditor _uib = uib;
+    private readonly JobTreeUib _uib = uib;
     private bool _hasUnsavedChanges;
 
     public void Run()

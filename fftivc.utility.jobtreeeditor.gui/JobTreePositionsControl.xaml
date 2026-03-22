@@ -1,0 +1,162 @@
+﻿<UserControl x:Class="fftivc.utility.jobtreeeditor.gui.JobTreePositionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:fftivc.utility.jobtreeeditor.gui"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid Margin="0,10,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Edit panel -->
+        <Border Grid.Row="0" Background="{DynamicResource PanelBg}"
+        BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
+        CornerRadius="6" Padding="12" Margin="0,0,0,10"
+        x:Name="EditPanel" IsEnabled="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource SectionLabel}" Text="EDIT POSITION"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Job:" Foreground="{DynamicResource TextPrimary}"
+                    VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="JobSelector" Width="150" DisplayMemberPath="Name"
+                    SelectionChanged="JobSelector_Changed" VerticalAlignment="Center"/>
+
+                    <TextBlock Text="X:" Foreground="{DynamicResource TextPrimary}"
+                    VerticalAlignment="Center" Margin="16,0,4,0"/>
+                    <TextBox x:Name="XBox" Width="60" VerticalAlignment="Center" Padding="4,3"
+                    TextAlignment="Right" FontSize="12"/>
+
+                    <TextBlock Text="Y:" Foreground="{DynamicResource TextPrimary}"
+                    VerticalAlignment="Center" Margin="12,0,4,0"/>
+                    <TextBox x:Name="YBox" Width="60" VerticalAlignment="Center" Padding="4,3"
+                    TextAlignment="Right" FontSize="12"/>
+
+                    <Button Content="Apply" Margin="12,0,0,0" Style="{StaticResource PrimaryButton}"
+                    Click="ApplyManual_Click"/>
+
+                    <Button Content="Reset to default" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                    Click="ResetSelected_Click"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock Text="Swap with:" Foreground="{DynamicResource TextPrimary}"
+                    VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="SwapSelector" Width="150" DisplayMemberPath="Name"
+                    VerticalAlignment="Center"/>
+                    <Button Content="Swap" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                    Click="Swap_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 2: DataGrid -->
+        <DataGrid Grid.Row="2" x:Name="JobGrid"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          IsReadOnly="True"
+          SelectionMode="Single"
+          SelectionChanged="JobGrid_SelectionChanged"
+          HeadersVisibility="Column"
+          GridLinesVisibility="Horizontal"
+          HorizontalGridLinesBrush="{DynamicResource GridLineBrush}"
+          BorderBrush="{DynamicResource PanelBorder}"
+          Background="{DynamicResource GridBg}"
+          RowBackground="{DynamicResource GridBg}"
+          AlternatingRowBackground="{DynamicResource GridAltRowBg}"
+          Foreground="{DynamicResource TextPrimary}"
+          FontSize="13"
+          Margin="0,0,0,10">
+
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource GridHeaderBg}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource GridHeaderFg}"/>
+                    <Setter Property="Padding" Value="8,6"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource GridLineBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="8,4"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GridSelectionBg}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource GridSelectionFg}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GridSelectionBg}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding RecordIndex}" Width="35"/>
+                <DataGridTextColumn Header="Job" Binding="{Binding Name}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Medium"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Current X" Binding="{Binding X}" Width="80"/>
+                <DataGridTextColumn Header="Current Y" Binding="{Binding Y}" Width="80"/>
+                <DataGridTextColumn Header="Default" Binding="{Binding DefaultPosition}" Width="110">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Key" Binding="{Binding GeneralJobKey}" Width="45">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="●" Foreground="{DynamicResource ModifiedDot}" FontSize="10"
+                                HorizontalAlignment="Center"
+                                Visibility="{Binding IsModified,
+                                Converter={StaticResource BoolToVis}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

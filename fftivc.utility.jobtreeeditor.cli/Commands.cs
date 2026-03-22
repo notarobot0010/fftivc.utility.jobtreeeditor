@@ -20,7 +20,7 @@ public class Commands
 
         try
         {
-            var uib = new JobTreeUibEditor(inputPath);
+            var uib = new JobTreeUib(inputPath);
             var editor = new ConsoleEditor(uib, outputPath);
             editor.Run();
             return 0;
@@ -61,7 +61,7 @@ public class Commands
 
         try
         {
-            var uib = new JobTreeUibEditor(inputPath);
+            var uib = new JobTreeUib(inputPath);
             var config = LayoutConfig.LoadFromFile(layoutPath);
 
             Console.WriteLine($"Applying layout \"{config.Name}\" to {inputPath}...");
@@ -106,7 +106,7 @@ public class Commands
 
         try
         {
-            var uib = new JobTreeUibEditor(inputPath);
+            var uib = new JobTreeUib(inputPath);
             var config = LayoutConfig.FromUibFile(uib, "Exported from " + Path.GetFileName(inputPath));
             config.SaveToFile(jsonPath);
             Console.WriteLine($"Exported {config.Positions.Count} positions to: {jsonPath}");

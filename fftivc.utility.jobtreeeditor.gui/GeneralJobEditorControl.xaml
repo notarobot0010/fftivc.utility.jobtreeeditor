@@ -1,0 +1,249 @@
+﻿<UserControl x:Class="fftivc.utility.jobtreeeditor.gui.GeneralJobEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:fftivc.utility.jobtreeeditor.gui"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Edit panel -->
+        <Border Grid.Row="0" Background="{DynamicResource PanelBg}"
+                BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
+                CornerRadius="6" Padding="12" Margin="0,10,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource SectionLabel}" Text="EDIT JOB"/>
+
+                <!-- Job selector -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Job:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="GjJobSelector" Width="180"
+                              SelectionChanged="GjJobSelector_Changed" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayLabel}" Foreground="{DynamicResource TextPrimary}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Comment:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="20,0,6,0"/>
+                    <TextBox x:Name="CommentBox" Width="200" VerticalAlignment="Center"
+                             Padding="4,3" FontSize="12"/>
+                </StackPanel>
+
+                <!-- Neighbors -->
+                <TextBlock Grid.Row="2" Style="{StaticResource SectionLabel}" Text="CURSOR NEIGHBORS" Margin="0,4,0,4"/>
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Right:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <ComboBox x:Name="RightNeighborBox" Width="150" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{DynamicResource TextPrimary}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Down:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="12,0,4,0"/>
+                    <ComboBox x:Name="DownNeighborBox" Width="150" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{DynamicResource TextPrimary}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Left:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="12,0,4,0"/>
+                    <ComboBox x:Name="LeftNeighborBox" Width="150" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{DynamicResource TextPrimary}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Up:" Foreground="{DynamicResource TextPrimary}"
+                               VerticalAlignment="Center" Margin="12,0,4,0"/>
+                    <ComboBox x:Name="UpNeighborBox" Width="150" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{DynamicResource TextPrimary}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Prerequisites -->
+                <TextBlock Grid.Row="4" Style="{StaticResource SectionLabel}" Text="PREREQUISITES" Margin="0,4,0,4"/>
+
+                <StackPanel Grid.Row="5">
+                    <DataGrid x:Name="PrereqGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="{DynamicResource GridLineBrush}"
+                              BorderBrush="{DynamicResource PanelBorder}"
+                              Background="{DynamicResource GridBg}"
+                              RowBackground="{DynamicResource GridBg}"
+                              Foreground="{DynamicResource TextPrimary}"
+                              MaxHeight="140"
+                              FontSize="12"
+                              Margin="0,0,0,6">
+
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource GridHeaderBg}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource GridHeaderFg}"/>
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource GridLineBrush}"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Required Job" Binding="{Binding RequiredJobDisplay}" Width="160" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Level" Binding="{Binding RequiredLevel}" Width="60"/>
+                            <DataGridTextColumn Header="Label Position" Binding="{Binding PositionDisplay}" Width="120" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Add Prerequisite" Style="{StaticResource ActionButton}"
+                                Click="AddPrereq_Click" Margin="0,0,8,0"/>
+                        <Button Content="Remove Selected" Style="{StaticResource ActionButton}"
+                                Click="RemovePrereq_Click" Margin="0,0,8,0"/>
+                        <Button Content="Apply Changes" Style="{StaticResource PrimaryButton}"
+                                Click="ApplyChanges_Click" Margin="0,0,8,0"/>
+                        <Button Content="Reset to Default" Style="{StaticResource ActionButton}"
+                                Click="ResetSelected_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 1: Main data grid -->
+        <DataGrid Grid.Row="1" x:Name="GjGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionChanged="GjGrid_SelectionChanged"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="{DynamicResource GridLineBrush}"
+                  BorderBrush="{DynamicResource PanelBorder}"
+                  Background="{DynamicResource GridBg}"
+                  RowBackground="{DynamicResource GridBg}"
+                  AlternatingRowBackground="{DynamicResource GridAltRowBg}"
+                  Foreground="{DynamicResource TextPrimary}"
+                  FontSize="13">
+
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource GridHeaderBg}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource GridHeaderFg}"/>
+                    <Setter Property="Padding" Value="8,6"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource GridLineBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="6,4"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GridSelectionBg}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource GridSelectionFg}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource GridSelectionBg}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="40"/>
+                <DataGridTextColumn Header="Job" Binding="{Binding Name}" Width="110">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Medium"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Right" Binding="{Binding RightDisplay}" Width="70"/>
+                <DataGridTextColumn Header="Down" Binding="{Binding DownDisplay}" Width="70"/>
+                <DataGridTextColumn Header="Left" Binding="{Binding LeftDisplay}" Width="70"/>
+                <DataGridTextColumn Header="Up" Binding="{Binding UpDisplay}" Width="70"/>
+                <DataGridTextColumn Header="Prereqs" Binding="{Binding PrereqSummary}" Width="200">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="●" Foreground="{DynamicResource ModifiedDot}" FontSize="10"
+                                       HorizontalAlignment="Center"
+                                       Visibility="{Binding IsModified,
+                                           Converter={StaticResource BoolToVis}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Row 2: Calculate button -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="Calculate Neighbors from Positions" Style="{StaticResource PrimaryButton}"
+                    Click="CalculateNeighbors_Click"/>
+            <Button Content="Reset All to Defaults" Style="{StaticResource ActionButton}"
+                    Margin="8,0,0,0" Click="ResetAll_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

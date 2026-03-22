@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\fftivc.utility.jobtreeeditor.generaljob\fftivc.utility.jobtreeeditor.generaljob.csproj" />
     <ProjectReference Include="..\fftivc.utility.jobtreeeditor.uib\fftivc.utility.jobtreeeditor.uib.csproj" />
   </ItemGroup>
 

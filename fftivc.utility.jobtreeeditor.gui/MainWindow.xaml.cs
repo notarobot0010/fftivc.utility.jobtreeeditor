@@ -1,9 +1,7 @@
 ﻿using fftivc.utility.jobtreeeditor.uib;
 using Microsoft.Win32;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace fftivc.utility.jobtreeeditor.gui;
 /// <summary>
@@ -11,18 +9,19 @@ namespace fftivc.utility.jobtreeeditor.gui;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private JobTreeUibEditor? _uib;
-    private ObservableCollection<JobViewModel> _jobs = [];
     private bool _hasUnsavedChanges;
-    private bool _suppressSelectionSync;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        OutputPathBox.Text = Path.Combine(".", "output", "ffto_job_tree.uib");
-        JobGrid.ItemsSource = _jobs;
+        JobTreeEditor.DataChanged += () => { _hasUnsavedChanges = true; };
+        GeneralJobEditor.DataChanged += () => { _hasUnsavedChanges = true; };
 
+        JobTreeEditor.StatusMessage += msg => SetStatus(msg);
+
+        OutputPathBox.Text = Path.Combine(".", "output", "ffto_job_tree.uib");
+        
         SetStatus("Open a .uib file to get started.");
     }
     
@@ -57,14 +56,13 @@ public partial class MainWindow : Window
     {
         try
         {
-            _uib = new JobTreeUibEditor(path);
+            var uib = new JobTreeUib(path);
+            JobTreeEditor.LoadUib(uib);
+            GeneralJobEditor.UibFile = uib;
             InputPathBox.Text = path;
-
-            RefreshAllViewModels();
-            EditPanel.IsEnabled = true;
             _hasUnsavedChanges = false;
 
-            SetStatus($"Loaded {Path.GetFileName(path)} — {_jobs.Count} jobs.");
+            SetStatus($"Loaded {Path.GetFileName(path)} — {JobTreeEditor.JobCount()} jobs.");
         }
         catch (Exception ex)
         {
@@ -75,7 +73,8 @@ public partial class MainWindow : Window
 
     private void Save_Click(object sender, RoutedEventArgs e)
     {
-        if (_uib == null) return;
+        var uib = JobTreeEditor.GetUibFile();
+        if (uib == null) return;
 
         string outputPath = OutputPathBox.Text.Trim();
         if (string.IsNullOrEmpty(outputPath))
@@ -87,8 +86,19 @@ public partial class MainWindow : Window
 
         try
         {
-            _uib.Save(outputPath);
+            uib.Save(outputPath);
             _hasUnsavedChanges = false;
+            string sql = GeneralJobEditor.GenerateSql();
+            if (!string.IsNullOrEmpty(sql))
+            {
+                string sqlPath = Path.ChangeExtension(outputPath, ".sql");
+                File.WriteAllText(sqlPath, sql);
+                SetStatus($"Saved UIB to {outputPath} and SQL to {sqlPath}");
+            }
+            else
+            {
+                SetStatus($"Saved to {outputPath} (no GeneralJob changes).");
+            }
             SetStatus($"Saved to {outputPath}");
         }
         catch (Exception ex)
@@ -97,137 +107,14 @@ public partial class MainWindow : Window
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-#endregion
-
-
-    #region GridSelection
-    private void JobGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_suppressSelectionSync) return;
-
-        if (JobGrid.SelectedItem is JobViewModel vm)
-        {
-            _suppressSelectionSync = true;
-            JobSelector.SelectedItem = vm;
-            PopulateEditFields(vm);
-            _suppressSelectionSync = false;
-        }
-    }
-
-    private void JobSelector_Changed(object sender, SelectionChangedEventArgs e)
-    {
-        if (_suppressSelectionSync) return;
-
-        if (JobSelector.SelectedItem is JobViewModel vm)
-        {
-            _suppressSelectionSync = true;
-            JobGrid.SelectedItem = vm;
-            JobGrid.ScrollIntoView(vm);
-            PopulateEditFields(vm);
-            PopulateSwapSelector(vm);
-            _suppressSelectionSync = false;
-        }
-    }
-
-    private void PopulateEditFields(JobViewModel vm)
-    {
-        XBox.Text = vm.X.ToString();
-        YBox.Text = vm.Y.ToString();
-    }
-
-    private void PopulateSwapSelector(JobViewModel selected)
-    {
-        var others = _jobs.Where(j => j != selected).ToList();
-        SwapSelector.ItemsSource = others;
-        if (others.Count > 0)
-            SwapSelector.SelectedIndex = 0;
-    }
-#endregion
-
-    #region EditActions
-    private void ApplyManual_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel vm) return;
-
-        if (!int.TryParse(XBox.Text.Trim(), out int x))
-        {
-            MessageBox.Show("Invalid X value.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-        if (!int.TryParse(YBox.Text.Trim(), out int y))
-        {
-            MessageBox.Show("Invalid Y value.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (x < 0 || x > UibConstants.ScreenWidth || y < 0 || y > UibConstants.ScreenHeight)
-        {
-            var result = MessageBox.Show(
-                $"({x}, {y}) is outside the standard 1920×1080 area.\nApply anyway?",
-                "Out of Range", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result != MessageBoxResult.Yes) return;
-        }
-
-        _uib.WritePosition(vm.Slot, new JobPosition(x, y));
-        vm.RefreshFrom(_uib.ReadPosition(vm.Slot));
-        MarkChanged();
-
-        SetStatus($"{vm.Name} moved to ({x}, {y}).");
-    }
-
-    private void ResetSelected_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel vm) return;
-
-        _uib.ResetToDefault(vm.Slot);
-        vm.RefreshFrom(_uib.ReadPosition(vm.Slot));
-        PopulateEditFields(vm);
-        MarkChanged();
-
-        SetStatus($"{vm.Name} reset to default ({vm.Slot.DefaultX}, {vm.Slot.DefaultY}).");
-    }
-
-    private void Swap_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel sourceVm) return;
-        if (SwapSelector.SelectedItem is not JobViewModel targetVm) return;
-
-        if (sourceVm == targetVm) return;
-
-        _uib.SwapPositions(sourceVm.Slot, targetVm.Slot);
-        sourceVm.RefreshFrom(_uib.ReadPosition(sourceVm.Slot));
-        targetVm.RefreshFrom(_uib.ReadPosition(targetVm.Slot));
-        PopulateEditFields(sourceVm);
-        MarkChanged();
-
-        SetStatus($"Swapped {sourceVm.Name} ({sourceVm.X}, {sourceVm.Y}) ↔ {targetVm.Name} ({targetVm.X}, {targetVm.Y}).");
-    }
-
-    private void ResetAll_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-
-        var result = MessageBox.Show(
-            "Reset ALL jobs to their default positions?",
-            "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (result != MessageBoxResult.Yes) return;
-
-        _uib.ResetAllToDefaults();
-        RefreshAllViewModels();
-        MarkChanged();
-
-        SetStatus("All jobs reset to default positions.");
-    }
-#endregion
+    #endregion
 
     #region Layout
 
     private void LoadLayout_Click(object sender, RoutedEventArgs e)
     {
-        if (_uib == null)
+        var uib = JobTreeEditor.GetUibFile();
+        if (uib == null)
         {
             MessageBox.Show("Open a UIB file first.", "No File", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -250,9 +137,8 @@ public partial class MainWindow : Window
                 "Confirm Load", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
 
-            var (applied, skipped) = config.ApplyTo(_uib);
-            RefreshAllViewModels();
-            MarkChanged();
+            var (applied, skipped) = config.ApplyTo(uib);
+            JobTreeEditor.ApplyLayout();
 
             string msg = $"Applied {applied.Count} positions.";
             if (skipped.Count > 0)
@@ -268,7 +154,8 @@ public partial class MainWindow : Window
 
     private void ExportLayout_Click(object sender, RoutedEventArgs e)
     {
-        if (_uib == null)
+        var uib = JobTreeEditor.GetUibFile();
+        if (uib == null)
         {
             MessageBox.Show("Open a UIB file first.", "No File", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -285,7 +172,7 @@ public partial class MainWindow : Window
 
         try
         {
-            var config = LayoutConfig.FromUibFile(_uib, "Exported Layout");
+            var config = LayoutConfig.FromUibFile(uib, "Exported Layout");
             config.SaveToFile(dlg.FileName);
             SetStatus($"Layout exported to {dlg.FileName}");
         }
@@ -295,34 +182,14 @@ public partial class MainWindow : Window
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private void ResetAll_Click(object sender, RoutedEventArgs e) 
+    {
+        JobTreeEditor.ResetAll();
+    }
     #endregion
 
     #region Helpers
-    private void RefreshAllViewModels()
-    {
-        if (_uib == null) return;
-
-        var positions = _uib.ReadAllPositions();
-
-        _jobs.Clear();
-        foreach (var slot in UibConstants.Jobs)
-            _jobs.Add(new JobViewModel(slot, positions[slot]));
-
-        JobSelector.ItemsSource = _jobs;
-        if (_jobs.Count > 0)
-        {
-            JobSelector.SelectedIndex = 0;
-            PopulateSwapSelector(_jobs[0]);
-        }
-    }
-
-    private void MarkChanged()
-    {
-        _hasUnsavedChanges = true;
-        // Force the grid to re-evaluate row styling
-        JobGrid.Items.Refresh();
-    }
-
     private void SetStatus(string text)
     {
         StatusText.Text = text;

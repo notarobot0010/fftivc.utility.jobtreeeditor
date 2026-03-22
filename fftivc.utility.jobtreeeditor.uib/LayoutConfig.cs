@@ -26,7 +26,7 @@ public class LayoutConfig
     /// <summary>
     /// Create a layout config from the current state of a UIB file.
     /// </summary>
-    public static LayoutConfig FromUibFile(JobTreeUibEditor uib, string name = "Exported Layout")
+    public static LayoutConfig FromUibFile(JobTreeUib uib, string name = "Exported Layout")
     {
         var config = new LayoutConfig { Name = name };
         foreach (var slot in UibConstants.Jobs)
@@ -69,7 +69,7 @@ public class LayoutConfig
     /// Only applies entries whose job name matches a known slot.
     /// Returns a list of jobs that were applied and any that were skipped.
     /// </summary>
-    public (List<string> applied, List<string> skipped) ApplyTo(JobTreeUibEditor uib)
+    public (List<string> applied, List<string> skipped) ApplyTo(JobTreeUib uib)
     {
         var applied = new List<string>();
         var skipped = new List<string>();
