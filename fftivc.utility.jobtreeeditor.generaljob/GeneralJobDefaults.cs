@@ -357,12 +357,12 @@ public class GeneralJobDefaults
     };
 
     /// <summary>
-    /// Format a job key as "Key — Name" for display in dropdowns.
+    /// Format a job key as "Key - Name" for display in dropdowns.
     /// </summary>
     public static string FormatJobRef(int key)
     {
         return JobNames.TryGetValue(key, out var name)
-            ? $"{key} — {name}"
-            : $"{key} — ???";
+            ? $"{key} - {name}"
+            : $"{key} - ???";
     }
 }
