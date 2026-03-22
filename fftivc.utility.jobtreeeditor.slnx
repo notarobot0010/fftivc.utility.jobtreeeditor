@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/SolutionItems/">
     <File Path=".gitignore" />
+    <File Path="analyze_uib.py" />
     <File Path="README.md" />
   </Folder>
   <Project Path="fftivc.utility.jobtreeeditor.cli/fftivc.utility.jobtreeeditor.cli.csproj" />
