@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using static fftivc.utility.jobtreeeditor.uib.UibConstants;
 
 namespace fftivc.utility.jobtreeeditor.gui;
 /// <summary>
@@ -30,10 +29,27 @@ public partial class JobTreePositionsControl : UserControl
     public void LoadUib(JobTreeUib uib)
     {
         _uib = uib;
-        SlotBindingCombo.ItemsSource = Enum.GetValues<UibSlotName>();
         RefreshAllViewModels();
         EditPanel.IsEnabled = true;
     }
+
+    #region ModeToggle
+    private void Mode_Changed(object sender, RoutedEventArgs e)
+    {
+        if (BindingsPanel == null || PositionsPanel == null) return;
+
+        if (ModeBindings.IsChecked == true)
+        {
+            BindingsPanel.Visibility = Visibility.Visible;
+            PositionsPanel.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            BindingsPanel.Visibility = Visibility.Collapsed;
+            PositionsPanel.Visibility = Visibility.Visible;
+        }
+    }
+    #endregion
 
     #region GridSelection
     private void JobGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -59,7 +75,7 @@ public partial class JobTreePositionsControl : UserControl
             JobGrid.SelectedItem = vm;
             JobGrid.ScrollIntoView(vm);
             PopulateEditFields(vm);
-            PopulateSwapSelector(vm);
+            PopulateSwapSelectors(vm);
             _suppressSelectionSync = false;
         }
     }
@@ -68,10 +84,10 @@ public partial class JobTreePositionsControl : UserControl
     {
         XBox.Text = vm.X.ToString();
         YBox.Text = vm.Y.ToString();
-        SlotBindingCombo.SelectedItem = vm.SlotBinding;
+        CurrentBindingLabel.Text = vm.SlotBinding.ToString();
     }
 
-    private void PopulateSwapSelector(JobViewModel selected)
+    private void PopulateSwapSelectors(JobViewModel selected)
     {
         var others = _jobs.Where(j => j != selected).ToList();
         PositionSwapSelector.ItemsSource = others;
@@ -85,7 +101,7 @@ public partial class JobTreePositionsControl : UserControl
     #endregion
 
     #region EditActions
-    public void ApplyLayout() 
+    public void ApplyLayout()
     {
         RefreshAllViewModels();
         MarkChanged();
@@ -95,7 +111,8 @@ public partial class JobTreePositionsControl : UserControl
     {
         if (_uib == null) return;
 
-        var result = MessageBox.Show("Reset ALL jobs to their default positions and slot bindings?",
+        var result = MessageBox.Show(
+            "Reset ALL jobs to their default positions and slot bindings?",
             "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (result != MessageBoxResult.Yes) return;
 
@@ -107,6 +124,44 @@ public partial class JobTreePositionsControl : UserControl
 
         StatusMessage?.Invoke("All jobs reset to defaults.");
     }
+
+    #region Slot Bindings
+
+    private void SwapBindings_Click(object sender, RoutedEventArgs e)
+    {
+        if (_uib == null) return;
+        if (JobSelector.SelectedItem is not JobViewModel sourceVm) return;
+        if (BindingSwapSelector.SelectedItem is not JobViewModel targetVm) return;
+        if (sourceVm == targetVm) return;
+
+        var refA = _uib.ReadNameRef(sourceVm.Slot);
+        var refB = _uib.ReadNameRef(targetVm.Slot);
+        _uib.WriteNameRef(sourceVm.Slot, refB);
+        _uib.WriteNameRef(targetVm.Slot, refA);
+        sourceVm.RefreshFrom(_uib.ReadNameRef(sourceVm.Slot));
+        targetVm.RefreshFrom(_uib.ReadNameRef(targetVm.Slot));
+        
+        PopulateEditFields(sourceVm);
+        MarkChanged();
+
+        StatusMessage?.Invoke($"Swapped bindings: {sourceVm.Name} → {sourceVm.SlotBinding}, {targetVm.Name} → {targetVm.SlotBinding}.");
+    }
+
+    private void ResetBinding_Click(object sender, RoutedEventArgs e)
+    {
+        if (_uib == null) return;
+        if (JobSelector.SelectedItem is not JobViewModel vm) return;
+
+        _uib.ResetNameRefToDefault(vm.Slot);
+        vm.RefreshFrom(_uib.ReadNameRef(vm.Slot));
+        PopulateEditFields(vm);
+        MarkChanged();
+
+        StatusMessage?.Invoke($"{vm.Name} binding reset to {vm.DefaultSlotBinding}.");
+    }
+    #endregion
+
+    #region Positions
 
     private void ApplyPosition_Click(object sender, RoutedEventArgs e)
     {
@@ -134,9 +189,9 @@ public partial class JobTreePositionsControl : UserControl
 
         _uib.WritePosition(vm.Slot, new JobPosition(x, y));
         vm.RefreshFrom(_uib.ReadPosition(vm.Slot));
-
         MarkChanged();
-        StatusMessage?.Invoke($"{vm.Name} moved to ({x}, {y}), binding: {vm.SlotBinding}.");
+
+        StatusMessage?.Invoke($"{vm.Name} moved to ({x}, {y}).");
     }
 
     private void ResetPosition_Click(object sender, RoutedEventArgs e)
@@ -157,69 +212,18 @@ public partial class JobTreePositionsControl : UserControl
         if (_uib == null) return;
         if (JobSelector.SelectedItem is not JobViewModel sourceVm) return;
         if (PositionSwapSelector.SelectedItem is not JobViewModel targetVm) return;
-
         if (sourceVm == targetVm) return;
 
         _uib.SwapPositions(sourceVm.Slot, targetVm.Slot);
         sourceVm.RefreshFrom(_uib.ReadPosition(sourceVm.Slot));
         targetVm.RefreshFrom(_uib.ReadPosition(targetVm.Slot));
-
-        _uib.SwapPositions(sourceVm.Slot, targetVm.Slot);
-        sourceVm.RefreshFrom(_uib.ReadPosition(sourceVm.Slot));
-        targetVm.RefreshFrom(_uib.ReadPosition(targetVm.Slot));
-
         PopulateEditFields(sourceVm);
         MarkChanged();
 
         JobsSwapped?.Invoke(sourceVm.Slot.GeneralJobKey, targetVm.Slot.GeneralJobKey);
-        StatusMessage?.Invoke($"Swapped {sourceVm.Name} ({sourceVm.X}, {sourceVm.Y}) ↔ {targetVm.Name} ({targetVm.X}, {targetVm.Y}).");
+        StatusMessage?.Invoke($"Swapped positions: {sourceVm.Name} ({sourceVm.X}, {sourceVm.Y}) ↔ {targetVm.Name} ({targetVm.X}, {targetVm.Y}).");
     }
-
-    private void ApplyBinding_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel vm) return;
-        if (SlotBindingCombo.SelectedItem is not UibSlotName selectedBinding) return;
-
-        var nameRef = new JobNameRef(UibConstants.SlotNameToAddress[selectedBinding]);
-        _uib.WriteNameRef(vm.Slot, nameRef);
-        vm.RefreshFrom(_uib.ReadNameRef(vm.Slot));
-        MarkChanged();
-
-        StatusMessage?.Invoke($"{vm.Name} binding set to {selectedBinding}.");
-    }
-
-    private void ResetBinding_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel vm) return;
-
-        _uib.ResetNameRefToDefault(vm.Slot);
-        vm.RefreshFrom(_uib.ReadNameRef(vm.Slot));
-        SlotBindingCombo.SelectedItem = vm.SlotBinding;
-        MarkChanged();
-
-        StatusMessage?.Invoke($"{vm.Name} binding reset to {vm.DefaultSlotBinding}.");
-    }
-
-    private void SwapBindings_Click(object sender, RoutedEventArgs e)
-    {
-        if (_uib == null) return;
-        if (JobSelector.SelectedItem is not JobViewModel sourceVm) return;
-        if (BindingSwapSelector.SelectedItem is not JobViewModel targetVm) return;
-        if (sourceVm == targetVm) return;
-
-        var refA = _uib.ReadNameRef(sourceVm.Slot);
-        var refB = _uib.ReadNameRef(targetVm.Slot);
-        _uib.WriteNameRef(sourceVm.Slot, refB);
-        _uib.WriteNameRef(targetVm.Slot, refA);
-        sourceVm.RefreshFrom(_uib.ReadNameRef(sourceVm.Slot));
-        targetVm.RefreshFrom(_uib.ReadNameRef(targetVm.Slot));
-        SlotBindingCombo.SelectedItem = sourceVm.SlotBinding;
-        MarkChanged();
-
-        StatusMessage?.Invoke($"Swapped bindings: {sourceVm.Name} ↔ {targetVm.Name}.");
-    }
+    #endregion
     #endregion
 
     private void RefreshAllViewModels()
@@ -237,14 +241,13 @@ public partial class JobTreePositionsControl : UserControl
         if (_jobs.Count > 0)
         {
             JobSelector.SelectedIndex = 0;
-            PopulateSwapSelector(_jobs[0]);
+            PopulateSwapSelectors(_jobs[0]);
         }
     }
 
     private void MarkChanged()
     {
         DataChanged?.Invoke();
-        // Force the grid to re-evaluate row styling
         JobGrid.Items.Refresh();
     }
 }
