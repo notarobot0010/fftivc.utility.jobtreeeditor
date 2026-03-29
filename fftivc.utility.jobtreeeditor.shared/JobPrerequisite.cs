@@ -37,7 +37,7 @@ public class JobPrerequisite(GeneralJobKey requiredJobId, int requiredLevel, Lev
     public static string FormatJobRef(int key)
     {
         return JobNames.TryGetValue(key, out var name)
-            ? $"{key} — {name}"
-            : $"{key} — ???";
+            ? $"{key} - {name}"
+            : $"{key} - ???";
     }
 }
