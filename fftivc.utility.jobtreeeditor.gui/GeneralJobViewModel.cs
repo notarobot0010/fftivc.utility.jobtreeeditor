@@ -8,8 +8,8 @@ public class GeneralJobViewModel(GeneralJobRecord record, GeneralJobRecord origi
     private readonly GeneralJobRecord _original = original;
 
     public int Key => Record.Key;
-    public string Name => Record.Name;
-    public string DisplayLabel => $"{Record.Key} - {Record.Name}";
+    public string Name => Record.DisplayName;
+    public string DisplayLabel => $"{Record.Key} - {Record.DisplayName}";
     public string RightDisplay => GeneralJobDefaults.FormatJobRef((int)Record.RightNeighbor);
     public string DownDisplay => GeneralJobDefaults.FormatJobRef((int)Record.DownNeighbor);
     public string LeftDisplay => GeneralJobDefaults.FormatJobRef((int)Record.LeftNeighbor);

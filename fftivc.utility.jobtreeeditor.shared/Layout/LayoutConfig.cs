@@ -3,6 +3,7 @@ using fftivc.utility.jobtreeeditor.shared.GeneralJob;
 using fftivc.utility.jobtreeeditor.uib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static fftivc.utility.jobtreeeditor.uib.UibConstants;
 
 namespace fftivc.utility.jobtreeeditor.shared.Layout;
 
@@ -21,7 +22,7 @@ public class LayoutConfig
     public string Description { get; set; } = "";
 
     [JsonPropertyName("jobs")]
-    public List<LayoutJob> Jobs { get; set; } = new();
+    public List<LayoutJob> Jobs { get; set; } = [];
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -43,11 +44,20 @@ public class LayoutConfig
             var slot = UibConstants.Jobs.FirstOrDefault(s => s.GeneralJobKey == rec.Key);
             var pos = slot != null ? uib.ReadPosition(slot) : new JobPosition(0, 0);
 
+            string slotBinding = "Unknown";
+            if (slot != null)
+            {
+                var nameRef = uib.ReadNameRef(slot);
+                if (AddressToSlotName.TryGetValue(nameRef.Value, out var slotName))
+                    slotBinding = slotName.ToString();
+            }
+
             config.Jobs.Add(new LayoutJob
             {
                 Key = rec.Key,
-                Name = rec.Name,
+                DisplayName = rec.DisplayName,
                 Position = new LayoutPosition { X = pos.X, Y = pos.Y },
+                UibSlotBinding = slotBinding,
                 Comment = rec.Comment,
                 RequiredJobExp = [.. rec.RequiredJobExp],
                 Prerequisites = [.. rec.Prerequisites.Select(p => new LayoutPrerequisite
@@ -56,10 +66,32 @@ public class LayoutConfig
                     Level = p.RequiredLevel,
                     RequirementPosition = p.LevelRequirementPosition,
                 })],
-                RightNeighbor = (int)rec.RightNeighbor,
-                DownNeighbor = (int)rec.DownNeighbor,
-                LeftNeighbor = (int)rec.LeftNeighbor,
-                UpNeighbor = (int)rec.UpNeighbor,
+                Neighbors = 
+                {
+                    RightNeighbor = (int)rec.RightNeighbor,
+                    RightFallback = (int)rec.RightFallback,
+
+                    DownRightNeighbor = (int)rec.DownRightNeighbor,
+                    DownRightFallback = (int)rec.DownRightFallback,
+
+                    DownNeighbor = (int)rec.DownNeighbor,
+                    DownFallback = (int)rec.DownFallback,
+
+                    DownLeftNeighbor = (int)rec.DownLeftNeighbor,
+                    DownLeftFallback = (int)rec.DownLeftFallback,
+                    
+                    LeftNeighbor = (int)rec.LeftNeighbor,
+                    LeftFallback = (int)rec.LeftFallback,
+
+                    UpLeftNeighbor = (int)rec.UpLeftNeighbor,
+                    UpLeftFallback = (int)rec.UpLeftFallback,
+                    
+                    UpNeighbor = (int)rec.UpNeighbor,
+                    UpFallback = (int)rec.UpFallback,
+
+                    UpRightNeighbor = (int)rec.UpRightNeighbor,
+                    UpRightFallback = (int)rec.UpRightFallback,
+                }
             });
         }
 
@@ -81,28 +113,58 @@ public class LayoutConfig
         foreach (var rec in defaults)
         {
             var slot = UibConstants.Jobs.FirstOrDefault(s => s.GeneralJobKey == rec.Key);
+            string slotBinding = "Unknown";
+
+            if (slot != null && AddressToSlotName
+                .TryGetValue(slot.DefaultNameRef, out var slotName))
+            {
+                slotBinding = slotName.ToString();
+            }
 
             config.Jobs.Add(new LayoutJob
             {
                 Key = rec.Key,
-                Name = rec.Name,
+                DisplayName = rec.DisplayName,
+                UibSlotBinding = slotBinding,
                 Position = new LayoutPosition
                 {
                     X = slot?.DefaultX ?? 0,
                     Y = slot?.DefaultY ?? 0,
                 },
                 Comment = rec.Comment,
-                RequiredJobExp = new List<int>(rec.RequiredJobExp),
-                Prerequisites = rec.Prerequisites.Select(p => new LayoutPrerequisite
+                RequiredJobExp = [.. rec.RequiredJobExp],
+                Prerequisites = [.. rec.Prerequisites.Select(p => new LayoutPrerequisite
                 {
                     JobKey = (int)p.RequiredJobId,
                     Level = p.RequiredLevel,
                     RequirementPosition = p.LevelRequirementPosition,
-                }).ToList(),
-                RightNeighbor = (int)rec.RightNeighbor,
-                DownNeighbor = (int)rec.DownNeighbor,
-                LeftNeighbor = (int)rec.LeftNeighbor,
-                UpNeighbor = (int)rec.UpNeighbor,
+                })],
+                Neighbors = new LayoutNeighbors 
+                {
+                    RightNeighbor = (int)rec.RightNeighbor,
+                    RightFallback = (int)rec.RightFallback,
+
+                    DownRightNeighbor = (int)rec.DownRightNeighbor,
+                    DownRightFallback = (int)rec.DownRightFallback,
+
+                    DownNeighbor = (int)rec.DownNeighbor,
+                    DownFallback = (int)rec.DownFallback,
+
+                    DownLeftNeighbor = (int)rec.DownLeftNeighbor,
+                    DownLeftFallback = (int)rec.DownLeftFallback,
+
+                    LeftNeighbor = (int)rec.LeftNeighbor,
+                    LeftFallback = (int)rec.LeftFallback,
+
+                    UpLeftNeighbor = (int)rec.UpLeftNeighbor,
+                    UpLeftFallback = (int)rec.UpLeftFallback,
+
+                    UpNeighbor = (int)rec.UpNeighbor,
+                    UpFallback = (int)rec.UpFallback,
+
+                    UpRightNeighbor = (int)rec.UpRightNeighbor,
+                    UpRightFallback = (int)rec.UpRightFallback,
+                }
             });
         }
 
@@ -113,7 +175,7 @@ public class LayoutConfig
     /// Apply this layout to a UIB file and GeneralJob records.
     /// Returns lists of what was applied and what was skipped.
     /// </summary>
-    public (List<string> applied, List<string> skipped) Apply(JobTreeUib uib, List<GeneralJobRecord> records)
+    public (List<string> applied, List<string> skipped) Apply(JobTreeUib uib, List<GeneralJobRecord> generalJobRecords)
     {
         var applied = new List<string>();
         var skipped = new List<string>();
@@ -124,34 +186,58 @@ public class LayoutConfig
             var slot = UibConstants.Jobs.FirstOrDefault(s => s.GeneralJobKey == entry.Key);
             if (slot == null)
             {
-                skipped.Add($"Key {entry.Key} ({entry.Name}) - no UIB slot");
+                skipped.Add($"Key {entry.Key} ({entry.DisplayName}) - no UIB slot");
                 continue;
             }
 
+            var slotName = Enum.Parse<UibSlotName>(entry.UibSlotBinding);
+            var nameRef = new JobNameRef(SlotNameToAddress[slotName]);
+
+            uib.WriteNameRef(slot, nameRef);
             uib.WritePosition(slot, new JobPosition(entry.Position.X, entry.Position.Y));
 
             // Apply GeneralJob data
-            var rec = records.FirstOrDefault(r => r.Key == entry.Key);
-            if (rec == null)
+            var generalJob = generalJobRecords.FirstOrDefault(r => r.Key == entry.Key);
+            if (generalJob == null)
             {
-                skipped.Add($"Key {entry.Key} ({entry.Name}) - no GeneralJob record");
+                skipped.Add($"Key {entry.Key} ({entry.DisplayName}) - no GeneralJob record");
                 continue;
             }
 
-            rec.Comment = entry.Comment;
-            rec.RequiredJobExp = new List<int>(entry.RequiredJobExp);
-            rec.Prerequisites = entry.Prerequisites.Select(p =>
+            generalJob.Comment = entry.Comment;
+            generalJob.RequiredJobExp = [.. entry.RequiredJobExp];
+            generalJob.Prerequisites = [.. entry.Prerequisites.Select(p =>
                 new JobPrerequisite(
                     (Job)p.JobKey,
                     p.Level,
                     p.RequirementPosition
-                )).ToList();
-            rec.RightNeighbor = (Job)entry.RightNeighbor;
-            rec.DownNeighbor = (Job)entry.DownNeighbor;
-            rec.LeftNeighbor = (Job)entry.LeftNeighbor;
-            rec.UpNeighbor = (Job)entry.UpNeighbor;
+                ))];
 
-            applied.Add($"{entry.Key} — {entry.Name}");
+            generalJob.RightNeighbor = (Job)entry.Neighbors.RightNeighbor;
+            generalJob.RightFallback = (Job)entry.Neighbors.RightFallback;
+
+            generalJob.DownRightNeighbor = (Job)entry.Neighbors.DownRightNeighbor;
+            generalJob.DownRightFallback = (Job)entry.Neighbors.UpRightFallback;
+
+            generalJob.DownNeighbor = (Job)entry.Neighbors.DownNeighbor;
+            generalJob.DownFallback = (Job)entry.Neighbors.DownFallback;
+
+            generalJob.DownLeftNeighbor = (Job)entry.Neighbors.DownLeftNeighbor;
+            generalJob.DownLeftFallback = (Job)entry.Neighbors.DownLeftFallback;
+
+            generalJob.LeftNeighbor = (Job)entry.Neighbors.LeftNeighbor;
+            generalJob.LeftFallback = (Job)entry.Neighbors.LeftFallback;
+
+            generalJob.UpLeftNeighbor = (Job)entry.Neighbors.UpLeftNeighbor;
+            generalJob.UpLeftFallback = (Job)entry.Neighbors.UpLeftFallback;
+
+            generalJob.UpNeighbor = (Job)entry.Neighbors.UpNeighbor;
+            generalJob.UpFallback = (Job)entry.Neighbors.UpFallback;
+
+            generalJob.UpRightNeighbor = (Job)entry.Neighbors.UpRightNeighbor;
+            generalJob.UpRightFallback = (Job)entry.Neighbors.UpRightFallback;
+
+            applied.Add($"{entry.Key} - {entry.DisplayName}");
         }
 
         return (applied, skipped);

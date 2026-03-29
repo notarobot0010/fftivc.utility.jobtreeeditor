@@ -32,7 +32,7 @@ public class JobPrerequisite(Job requiredJobId, int requiredLevel, LevelRequirem
     };
 
     /// <summary>
-    /// Format a job key as "Key — Name" for display in dropdowns.
+    /// Format a job key as "Key - Name" for display in dropdowns.
     /// </summary>
     public static string FormatJobRef(int key)
     {

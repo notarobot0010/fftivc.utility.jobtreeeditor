@@ -12,13 +12,14 @@ namespace fftivc.utility.jobtreeeditor.gui;
 public partial class MainWindow : Window
 {
     private bool _hasUnsavedChanges;
+    private bool _hasUnexportedChanges;
 
     public MainWindow()
     {
         InitializeComponent();
 
         JobTreeEditor.DataChanged += () => { _hasUnsavedChanges = true; };
-        GeneralJobEditor.DataChanged += () => { _hasUnsavedChanges = true; };
+        GeneralJobEditor.DataChanged += () => { _hasUnexportedChanges = true; };
 
         JobTreeEditor.StatusMessage += msg => SetStatus(msg);
 
@@ -79,7 +80,19 @@ public partial class MainWindow : Window
 
     private void GenerateSql_Click(object sender, RoutedEventArgs e)
     {
-        string sql = GeneralJobEditor.GenerateSql();
+        var choice = MessageBox.Show("Generate SQL for all values, or only changes from defaults?\n\n" + 
+            "• Yes = All values\n" +
+            "• No = Only changes\n" +
+            "• Cancel = Abort",
+            "SQL Export Mode",
+        MessageBoxButton.YesNoCancel,
+        MessageBoxImage.Question);
+
+        if (choice == MessageBoxResult.Cancel) return;
+
+        bool includeAllValues = (choice == MessageBoxResult.Yes);
+
+        string sql = GeneralJobEditor.GenerateSql(includeAllValues);
 
         if (string.IsNullOrEmpty(sql))
         {
@@ -238,6 +251,23 @@ public partial class MainWindow : Window
             {
                 case MessageBoxResult.Yes:
                     Save_Click(this, new RoutedEventArgs());
+                    break;
+                case MessageBoxResult.Cancel:
+                    e.Cancel = true;
+                    return;
+            }
+        }
+
+        if (_hasUnexportedChanges)
+        {
+            var result = MessageBox.Show(
+                "You have unexported changes. Export layout before closing?",
+                "Unexported Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    ExportLayout_Click(this, new RoutedEventArgs());
                     break;
                 case MessageBoxResult.Cancel:
                     e.Cancel = true;

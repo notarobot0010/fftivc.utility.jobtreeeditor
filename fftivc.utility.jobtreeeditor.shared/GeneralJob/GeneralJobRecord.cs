@@ -11,7 +11,7 @@ public class GeneralJobRecord
     public int Key { get; set; }
 
     /// <summary>Human-readable job name (not stored in NXD, just for our UI).</summary>
-    public string Name { get; set; } = "";
+    public string DisplayName { get; set; } = "";
 
     /// <summary>Comment column</summary>
     public string Comment { get; set; } = "";
@@ -28,14 +28,50 @@ public class GeneralJobRecord
     /// <summary>D-pad right neighbor (20/None = no neighbor).</summary>
     public Job RightNeighbor { get; set; }
 
+    /// <summary>D-pad right fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job RightFallback { get; set; }
+
+    ///  <summary>D-pad down-right neighbor (20/None = no neighbor).</summary>
+    public Job DownRightNeighbor { get; set; }
+
+    /// <summary>D-pad down-right fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job DownRightFallback { get; set; }
+
     /// <summary>D-pad down neighbor (20/None = no neighbor).</summary>
     public Job DownNeighbor { get; set; }
+
+    /// <summary>D-pad down fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job DownFallback { get; set; }
+
+    ///  <summary>D-pad down-left neighbor (20/None = no neighbor).</summary>
+    public Job DownLeftNeighbor { get; set; }
+
+    /// <summary>D-pad down-left fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job DownLeftFallback { get; set; }
 
     /// <summary>D-pad left neighbor (20/None = no neighbor).</summary>
     public Job LeftNeighbor { get; set; }
 
+    /// <summary>D-pad left fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job LeftFallback { get; set; }
+
+    ///  <summary>D-pad up-left neighbor (20/None = no neighbor).</summary>
+    public Job UpLeftNeighbor { get; set; }
+
+    /// <summary>D-pad up-left fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job UpLeftFallback { get; set; }
+
     /// <summary>D-pad up neighbor (20/None = no neighbor).</summary>
     public Job UpNeighbor { get; set; }
+
+    /// <summary>D-pad up fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job UpFallback { get; set; }
+
+    ///  <summary>D-pad up-right neighbor (20/None = no neighbor).</summary>
+    public Job UpRightNeighbor { get; set; }
+
+    /// <summary>D-pad up-right fallback if neighbor is not available (20/None = no neighbor).</summary>
+    public Job UpRightFallback { get; set; }
 
     /// <summary>Value meaning "no neighbor in this direction".</summary>
     public const Job NoNeighbor = Job.None;
@@ -45,14 +81,26 @@ public class GeneralJobRecord
         return new GeneralJobRecord
         {
             Key = Key,
-            Name = Name,
+            DisplayName = DisplayName,
             Comment = Comment,
             RequiredJobExp = [.. RequiredJobExp],
             Prerequisites = [.. Prerequisites.Select(p => p.Clone())],
             RightNeighbor = RightNeighbor,
+            RightFallback = RightFallback,
+            DownRightNeighbor = DownRightNeighbor,
+            DownRightFallback = DownRightFallback,
             DownNeighbor = DownNeighbor,
+            DownFallback = DownFallback,
+            DownLeftNeighbor = DownLeftNeighbor,
+            DownLeftFallback = DownLeftFallback,
             LeftNeighbor = LeftNeighbor,
+            LeftFallback = LeftFallback,
+            UpLeftNeighbor = UpLeftNeighbor,
+            UpLeftFallback = UpLeftFallback,
             UpNeighbor = UpNeighbor,
+            UpFallback = UpFallback,
+            UpRightNeighbor = UpRightNeighbor,
+            UpRightFallback = UpRightFallback,
         };
     }
 }

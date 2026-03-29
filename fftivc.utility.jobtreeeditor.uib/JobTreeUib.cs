@@ -40,6 +40,7 @@ public class JobTreeUib
         }
     }
 
+    #region Positions
     /// <summary>
     /// Read the current position of a job from the binary data.
     /// </summary>
@@ -86,7 +87,7 @@ public class JobTreeUib
     /// <summary>
     /// Reset a job to its default position.
     /// </summary>
-    public void ResetToDefault(JobSlot slot)
+    public void ResetPositionToDefault(JobSlot slot)
     {
         WritePosition(slot, new JobPosition(slot.DefaultX, slot.DefaultY));
     }
@@ -94,12 +95,77 @@ public class JobTreeUib
     /// <summary>
     /// Reset all jobs to their default positions.
     /// </summary>
-    public void ResetAllToDefaults()
+    public void ResetAllPositionsToDefaults()
     {
         foreach (var slot in UibConstants.Jobs)
-            ResetToDefault(slot);
+            ResetPositionToDefault(slot);
+    }
+    #endregion
+
+    #region Name References
+    /// <summary>
+    /// Read the name reference for a slot, converting the on-disk relative
+    /// offset to an absolute file address so it can be written to any slot.
+    /// </summary>
+    public JobNameRef ReadNameRef(JobSlot slot)
+    {
+        int relativeValue = BitConverter.ToInt32(_data, slot.NameRefAddress);
+        int absoluteAddress = slot.NameRefAddress + relativeValue;
+        return new JobNameRef(absoluteAddress);
     }
 
+    /// <summary>
+    /// Read all 20 name references.
+    /// </summary>
+    public Dictionary<JobSlot, JobNameRef> ReadAllNameRefs()
+    {
+        var result = new Dictionary<JobSlot, JobNameRef>();
+        foreach (var slot in UibConstants.Jobs)
+            result[slot] = ReadNameRef(slot);
+        return result;
+    }
+
+    /// <summary>
+    /// Write a name reference to a slot, converting the absolute file address
+    /// back to the relative offset the UIB format requires.
+    /// </summary>
+    public void WriteNameRef(JobSlot slot, JobNameRef nameRef)
+    {
+        int relativeValue = nameRef.Value - slot.NameRefAddress;
+        byte[] bytes = BitConverter.GetBytes(relativeValue);
+        Array.Copy(bytes, 0, _data, slot.NameRefAddress, 4);
+    }
+
+    /// <summary>
+    /// Swap the name references of two jobs (bi-directional).
+    /// </summary>
+    public void SwapJobNameRef(JobSlot a, JobSlot b)
+    {
+        var jobNameRefA = ReadNameRef(a);
+        var jobNameRefB = ReadNameRef(b);
+        WriteNameRef(a, jobNameRefB);
+        WriteNameRef(b, jobNameRefA);
+    }
+
+    /// <summary>
+    /// Reset a slot's name reference to its default.
+    /// </summary>
+    public void ResetNameRefToDefault(JobSlot slot)
+    {
+        WriteNameRef(slot, new JobNameRef(slot.DefaultNameRef));
+    }
+
+    /// <summary>
+    /// Reset all name references to their defaults.
+    /// </summary>
+    public void ResetAllNameRefsToDefaults()
+    {
+        foreach (var slot in UibConstants.Jobs)
+            ResetNameRefToDefault(slot);
+    }
+    #endregion
+
+    #region File I/O
     /// <summary>
     /// Save the modified data to a file, creating parent directories if needed.
     /// </summary>
@@ -116,4 +182,5 @@ public class JobTreeUib
     /// Get a copy of the raw file data.
     /// </summary>
     public byte[] GetData() => (byte[])_data.Clone();
+    #endregion
 }

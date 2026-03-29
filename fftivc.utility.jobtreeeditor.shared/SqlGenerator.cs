@@ -4,7 +4,7 @@ using System.Text;
 namespace fftivc.utility.jobtreeeditor.shared;
 
 /// <summary>
-/// Generates SQL UPDATE scripts for modified GeneralJob records.
+/// Generates SQL UPDATE scripts for GeneralJob records.
 /// </summary>
 public static class SqlGenerator
 {
@@ -13,9 +13,13 @@ public static class SqlGenerator
     /// UPDATE statements for any that changed.
     /// </summary>
     /// <param name="current">The current (potentially modified) records.</param>
-    /// <param name="original">The original records to compare against.</param>
+    /// <param name="original">The original records to compare against. Used when includeAllValues is false.</param>
+    /// <param name="includeAllValues">Generate SQL for all current values, 
+    /// otherwise only general SQL statements for values that differ from defaults.</param>
     /// <returns>A complete SQL script string, or empty if nothing changed.</returns>
-    public static string Generate(List<GeneralJobRecord> current, List<GeneralJobRecord> original)
+    public static string Generate(List<GeneralJobRecord> current, 
+        List<GeneralJobRecord> original, 
+        bool includeAllValues = false)
     {
         var sb = new StringBuilder();
         sb.AppendLine("-- FFT Ivalice Chronicles — GeneralJob edits");
@@ -32,15 +36,15 @@ public static class SqlGenerator
             var setClauses = new List<string>();
 
             // Comment
-            if (cur.Comment != orig.Comment)
+            if (includeAllValues || cur.Comment != orig.Comment)
                 setClauses.Add($"Comment = '{EscapeSql(cur.Comment)}'");
 
             // RequiredJobExp
-            if (!ListsEqual(cur.RequiredJobExp, orig.RequiredJobExp))
+            if (includeAllValues || !ListsEqual(cur.RequiredJobExp, orig.RequiredJobExp) || includeAllValues)
                 setClauses.Add($"RequiredJobExp = '{FormatIntArray(cur.RequiredJobExp)}'");
 
             // Prerequisites (three parallel arrays)
-            if (!PrerequisitesEqual(cur.Prerequisites, orig.Prerequisites))
+            if (includeAllValues || !PrerequisitesEqual(cur.Prerequisites, orig.Prerequisites))
             {
                 var ids = cur.Prerequisites.Select(p => (int)p.RequiredJobId).ToList();
                 var levels = cur.Prerequisites.Select(p => p.RequiredLevel).ToList();
@@ -52,16 +56,16 @@ public static class SqlGenerator
             }
 
             // Neighbors
-            if (cur.RightNeighbor != orig.RightNeighbor)
+            if (includeAllValues || cur.RightNeighbor != orig.RightNeighbor)
                 setClauses.Add($"Unknown28 = {(int)cur.RightNeighbor}");
 
-            if (cur.DownNeighbor != orig.DownNeighbor)
+            if (includeAllValues || cur.DownNeighbor != orig.DownNeighbor)
                 setClauses.Add($"Unknown30 = {(int)cur.DownNeighbor}");
 
-            if (cur.LeftNeighbor != orig.LeftNeighbor)
+            if (includeAllValues || cur.LeftNeighbor != orig.LeftNeighbor)
                 setClauses.Add($"Unknown38 = {(int)cur.LeftNeighbor}");
 
-            if (cur.UpNeighbor != orig.UpNeighbor)
+            if (includeAllValues || cur.UpNeighbor != orig.UpNeighbor)
                 setClauses.Add($"Unknown40 = {(int)cur.UpNeighbor}");
 
             if (setClauses.Count > 0)

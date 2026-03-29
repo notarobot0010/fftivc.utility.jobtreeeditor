@@ -87,7 +87,7 @@ public class ConsoleEditor(JobTreeUib uib, string outputPath)
                 ManualPosition(slot);
                 break;
             case "3":
-                _uib.ResetToDefault(slot);
+                _uib.ResetPositionToDefault(slot);
                 _hasUnsavedChanges = true;
                 PrintSuccess($"{slot.Name} reset to default ({slot.DefaultX}, {slot.DefaultY}).");
                 break;
@@ -173,7 +173,7 @@ public class ConsoleEditor(JobTreeUib uib, string outputPath)
         string? confirm = Console.ReadLine()?.Trim().ToLower();
         if (confirm != "y") return;
 
-        _uib.ResetAllToDefaults();
+        _uib.ResetAllPositionsToDefaults();
         _hasUnsavedChanges = true;
         PrintSuccess("All jobs reset to default positions.");
     }

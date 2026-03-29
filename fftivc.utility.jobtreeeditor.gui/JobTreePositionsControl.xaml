@@ -27,40 +27,65 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Style="{StaticResource SectionLabel}" Text="EDIT POSITION"/>
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                <!-- Shared job selector -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                     <TextBlock Text="Job:" Foreground="{DynamicResource TextPrimary}"
-                    VerticalAlignment="Center" Margin="0,0,6,0"/>
+                   VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <ComboBox x:Name="JobSelector" Width="150" DisplayMemberPath="Name"
-                    SelectionChanged="JobSelector_Changed" VerticalAlignment="Center"/>
-
-                    <TextBlock Text="X:" Foreground="{DynamicResource TextPrimary}"
-                    VerticalAlignment="Center" Margin="16,0,4,0"/>
-                    <TextBox x:Name="XBox" Width="60" VerticalAlignment="Center" Padding="4,3"
-                    TextAlignment="Right" FontSize="12"/>
-
-                    <TextBlock Text="Y:" Foreground="{DynamicResource TextPrimary}"
-                    VerticalAlignment="Center" Margin="12,0,4,0"/>
-                    <TextBox x:Name="YBox" Width="60" VerticalAlignment="Center" Padding="4,3"
-                    TextAlignment="Right" FontSize="12"/>
-
-                    <Button Content="Apply" Margin="12,0,0,0" Style="{StaticResource PrimaryButton}"
-                    Click="ApplyManual_Click"/>
-
-                    <Button Content="Reset to default" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
-                    Click="ResetSelected_Click"/>
+                  SelectionChanged="JobSelector_Changed" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <!-- Position section -->
+                <TextBlock Grid.Row="1" Style="{StaticResource SectionLabel}" Text="EDIT POSITION"/>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="X:" Foreground="{DynamicResource TextPrimary}"
+                   VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox x:Name="XBox" Width="60" VerticalAlignment="Center" Padding="4,3"
+                 TextAlignment="Right" FontSize="12"/>
+
+                    <TextBlock Text="Y:" Foreground="{DynamicResource TextPrimary}"
+                   VerticalAlignment="Center" Margin="12,0,4,0"/>
+                    <TextBox x:Name="YBox" Width="60" VerticalAlignment="Center" Padding="4,3"
+                 TextAlignment="Right" FontSize="12"/>
+
+                    <Button Content="Apply" Margin="12,0,0,0" Style="{StaticResource PrimaryButton}"
+                Click="ApplyPosition_Click"/>
+                    <Button Content="Reset" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                Click="ResetPosition_Click"/>
+
                     <TextBlock Text="Swap with:" Foreground="{DynamicResource TextPrimary}"
-                    VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <ComboBox x:Name="SwapSelector" Width="150" DisplayMemberPath="Name"
-                    VerticalAlignment="Center"/>
-                    <Button Content="Swap" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
-                    Click="Swap_Click"/>
+                   VerticalAlignment="Center" Margin="20,0,6,0"/>
+                    <ComboBox x:Name="PositionSwapSelector" Width="150" DisplayMemberPath="Name"
+                  VerticalAlignment="Center"/>
+                    <Button Content="Swap Positions" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                Click="SwapPositions_Click"/>
+                </StackPanel>
+
+                <!-- Slot binding section -->
+                <TextBlock Grid.Row="3" Style="{StaticResource SectionLabel}" Text="SLOT BINDING" Margin="0,4,0,0"/>
+
+                <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Binding:" Foreground="{DynamicResource TextPrimary}"
+                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="SlotBindingCombo" Width="140" VerticalAlignment="Center"/>
+
+                    <Button Content="Apply" Margin="12,0,0,0" Style="{StaticResource PrimaryButton}"
+                Click="ApplyBinding_Click"/>
+                    <Button Content="Reset" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                Click="ResetBinding_Click"/>
+
+                    <TextBlock Text="Swap with:" Foreground="{DynamicResource TextPrimary}"
+                   VerticalAlignment="Center" Margin="20,0,6,0"/>
+                    <ComboBox x:Name="BindingSwapSelector" Width="150" DisplayMemberPath="Name"
+                  VerticalAlignment="Center"/>
+                    <Button Content="Swap Bindings" Margin="8,0,0,0" Style="{StaticResource ActionButton}"
+                Click="SwapBindings_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -130,6 +155,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
+                <DataGridTextColumn Header="Binding" Binding="{Binding SlotBinding}" Width="110"/>
                 <DataGridTextColumn Header="Current X" Binding="{Binding X}" Width="80"/>
                 <DataGridTextColumn Header="Current Y" Binding="{Binding Y}" Width="80"/>
                 <DataGridTextColumn Header="Default" Binding="{Binding DefaultPosition}" Width="110">

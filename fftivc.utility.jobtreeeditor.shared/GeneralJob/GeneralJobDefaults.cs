@@ -44,7 +44,7 @@ public class GeneralJobDefaults
     {
 
         Key = 0,
-        Name = "Squire",
+        DisplayName = "Squire",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [],
@@ -57,7 +57,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultChemist = new()
     {
         Key = 1,
-        Name = "Chemist",
+        DisplayName = "Chemist",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [],
@@ -70,7 +70,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultKnight = new() 
     {
         Key = 2, 
-        Name = "Knight", 
+        DisplayName = "Knight", 
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Squire, 2, LevelRequirementPosition.Unknown5)],
@@ -83,7 +83,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultArcher = new()
     {
         Key = 3,
-        Name = "Archer",
+        DisplayName = "Archer",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Squire, 2, LevelRequirementPosition.Unknown6)],
@@ -96,7 +96,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultMonk = new()
     {
         Key = 4,
-        Name = "Monk",
+        DisplayName = "Monk",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Knight, 3, LevelRequirementPosition.Bottom)],
@@ -109,7 +109,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultWhiteMage = new()
     {
         Key = 5,
-        Name = "White Mage",
+        DisplayName = "White Mage",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Chemist, 2, LevelRequirementPosition.Unknown6)],
@@ -122,7 +122,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultBlackMage = new()
     {
         Key = 6,
-        Name = "Black Mage",
+        DisplayName = "Black Mage",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Chemist, 2, LevelRequirementPosition.Unknown5)],
@@ -135,7 +135,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultTimeMage = new()
     {
         Key = 7,
-        Name = "Time Mage",
+        DisplayName = "Time Mage",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.BlackMage, 3, LevelRequirementPosition.Bottom)],
@@ -148,7 +148,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultSummoner = new()
     {
         Key = 8,
-        Name = "Summoner",
+        DisplayName = "Summoner",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.TimeMage, 3, LevelRequirementPosition.Bottom)],
@@ -161,7 +161,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultThief = new()
     {
         Key = 9,
-        Name = "Thief",
+        DisplayName = "Thief",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Archer, 3, LevelRequirementPosition.Bottom)],
@@ -174,7 +174,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultOrator = new()
     {
         Key = 10,
-        Name = "Orator",
+        DisplayName = "Orator",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Mystic, 3, LevelRequirementPosition.Bottom)],
@@ -187,7 +187,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultMystic = new()
     {
         Key = 11,
-        Name = "Mystic",
+        DisplayName = "Mystic",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.WhiteMage, 3, LevelRequirementPosition.Bottom)],
@@ -200,7 +200,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultGeomancer = new()
     {
         Key = 12,
-        Name = "Geomancer",
+        DisplayName = "Geomancer",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Monk, 4, LevelRequirementPosition.Bottom)],
@@ -213,7 +213,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultDragoon = new()
     {
         Key = 13,
-        Name = "Dragoon",
+        DisplayName = "Dragoon",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [new(Job.Thief, 4, LevelRequirementPosition.Bottom)],
@@ -226,7 +226,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultSamurai = new()
     {
         Key = 14,
-        Name = "Samurai",
+        DisplayName = "Samurai",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [
@@ -243,7 +243,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultNinja = new()
     {
         Key = 15,
-        Name = "Ninja",
+        DisplayName = "Ninja",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [
@@ -260,7 +260,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultArithmetician = new()
     {
         Key = 16,
-        Name = "Arithmetician",
+        DisplayName = "Arithmetician",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [
@@ -278,7 +278,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultBard = new()
     {
         Key = 17,
-        Name = "Bard",
+        DisplayName = "Bard",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [
@@ -294,7 +294,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultDancer = new()
     {
         Key = 18,
-        Name = "Dancer",
+        DisplayName = "Dancer",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [
@@ -310,7 +310,7 @@ public class GeneralJobDefaults
     private static readonly GeneralJobRecord DefaultMime = new()
     {
         Key = 19,
-        Name = "Mime",
+        DisplayName = "Mime",
         Comment = "",
         RequiredJobExp = [.. DefaultExp],
         Prerequisites = [

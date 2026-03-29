@@ -8,7 +8,10 @@ public class LayoutJob
     public int Key { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; } = "";
+    public string DisplayName { get; set; } = "";
+
+    [JsonPropertyName("uibSlotBinding")]
+    public string UibSlotBinding { get; set; } = "";
 
     [JsonPropertyName("position")]
     public LayoutPosition Position { get; set; } = new();
@@ -17,20 +20,11 @@ public class LayoutJob
     public string Comment { get; set; } = "";
 
     [JsonPropertyName("requiredJobExp")]
-    public List<int> RequiredJobExp { get; set; } = new();
+    public List<int> RequiredJobExp { get; set; } = [];
 
     [JsonPropertyName("prerequisites")]
-    public List<LayoutPrerequisite> Prerequisites { get; set; } = new();
+    public List<LayoutPrerequisite> Prerequisites { get; set; } = [];
 
-    [JsonPropertyName("rightNeighbor")]
-    public int RightNeighbor { get; set; }
-
-    [JsonPropertyName("downNeighbor")]
-    public int DownNeighbor { get; set; }
-
-    [JsonPropertyName("leftNeighbor")]
-    public int LeftNeighbor { get; set; }
-
-    [JsonPropertyName("upNeighbor")]
-    public int UpNeighbor { get; set; }
+    [JsonPropertyName("neighbors")]
+    public LayoutNeighbors Neighbors { get; set; } = new();
 }

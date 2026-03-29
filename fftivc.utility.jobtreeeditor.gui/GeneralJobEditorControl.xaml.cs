@@ -31,21 +31,14 @@ public partial class GeneralJobEditorControl : UserControl
     }
 
     /// <summary>Generate SQL for all modifications.</summary>
-    public string GenerateSql()
+    public string GenerateSql(bool includeAllValues)
     {
-        return SqlGenerator.Generate(_records, _originals);
-    }
-
-    /// <summary>Check if any records have been modified.</summary>
-    public bool HasChanges()
-    {
-        string sql = SqlGenerator.Generate(_records, _originals);
-        return !string.IsNullOrEmpty(sql);
+        return SqlGenerator.Generate(_records, GeneralJobDefaults.CreateDefaults(), includeAllValues);
     }
 
     private void BuildJobRefList()
     {
-        _jobRefList = new List<string>();
+        _jobRefList = [];
         for (int i = 0; i <= 20; i++)
             _jobRefList.Add(GeneralJobDefaults.FormatJobRef(i));
 
@@ -168,8 +161,8 @@ public partial class GeneralJobEditorControl : UserControl
         vm.Record.DownNeighbor = def.DownNeighbor;
         vm.Record.LeftNeighbor = def.LeftNeighbor;
         vm.Record.UpNeighbor = def.UpNeighbor;
-        vm.Record.Prerequisites = def.Prerequisites.Select(p => p.Clone()).ToList();
-        vm.Record.RequiredJobExp = new List<int>(def.RequiredJobExp);
+        vm.Record.Prerequisites = [.. def.Prerequisites.Select(p => p.Clone())];
+        vm.Record.RequiredJobExp = [.. def.RequiredJobExp];
 
         vm.Refresh();
         PopulateEditFields(vm);
