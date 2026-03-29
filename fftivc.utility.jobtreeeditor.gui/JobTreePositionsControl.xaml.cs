@@ -144,6 +144,7 @@ public partial class JobTreePositionsControl : UserControl
         PopulateEditFields(sourceVm);
         MarkChanged();
 
+        JobsSwapped?.Invoke(sourceVm.Slot.GeneralJobKey, targetVm.Slot.GeneralJobKey);
         StatusMessage?.Invoke($"Swapped bindings: {sourceVm.Name} → {sourceVm.SlotBinding}, {targetVm.Name} → {targetVm.SlotBinding}.");
     }
 
