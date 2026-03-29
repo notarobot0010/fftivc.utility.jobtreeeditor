@@ -23,6 +23,18 @@ public partial class GeneralJobEditorControl : UserControl
 
     public List<GeneralJobRecord> GetRecords() => _records;
 
+    /// <summary>All 16 neighbor combo boxes grouped for easy iteration.</summary>
+    private ComboBox[] AllNeighborBoxes => [
+        RightNeighborBox, RightFallbackBox,
+        DownRightNeighborBox, DownRightFallbackBox,
+        DownNeighborBox, DownFallbackBox,
+        DownLeftNeighborBox, DownLeftFallbackBox,
+        LeftNeighborBox, LeftFallbackBox,
+        UpLeftNeighborBox, UpLeftFallbackBox,
+        UpNeighborBox, UpFallbackBox,
+        UpRightNeighborBox, UpRightFallbackBox,
+    ];
+
     public GeneralJobEditorControl()
     {
         InitializeComponent();
@@ -42,10 +54,8 @@ public partial class GeneralJobEditorControl : UserControl
         for (int i = 0; i <= 20; i++)
             _jobRefList.Add(GeneralJobDefaults.FormatJobRef(i));
 
-        RightNeighborBox.ItemsSource = _jobRefList;
-        DownNeighborBox.ItemsSource = _jobRefList;
-        LeftNeighborBox.ItemsSource = _jobRefList;
-        UpNeighborBox.ItemsSource = _jobRefList;
+        foreach (var box in AllNeighborBoxes)
+            box.ItemsSource = _jobRefList;
     }
 
     public void Initialize()
@@ -103,11 +113,29 @@ public partial class GeneralJobEditorControl : UserControl
     private void PopulateEditFields(GeneralJobViewModel vm)
     {
         CommentBox.Text = vm.Record.Comment;
-        RightNeighborBox.SelectedIndex = (int)vm.Record.RightNeighbor;
-        DownNeighborBox.SelectedIndex = (int)vm.Record.DownNeighbor;
-        LeftNeighborBox.SelectedIndex = (int)vm.Record.LeftNeighbor;
-        UpNeighborBox.SelectedIndex = (int)vm.Record.UpNeighbor;
+        CompassCenterLabel.Text = vm.Name;
 
+        // Primary neighbors
+        RightNeighborBox.SelectedIndex = (int)vm.Record.RightNeighbor;
+        DownRightNeighborBox.SelectedIndex = (int)vm.Record.DownRightNeighbor;
+        DownNeighborBox.SelectedIndex = (int)vm.Record.DownNeighbor;
+        DownLeftNeighborBox.SelectedIndex = (int)vm.Record.DownLeftNeighbor;
+        LeftNeighborBox.SelectedIndex = (int)vm.Record.LeftNeighbor;
+        UpLeftNeighborBox.SelectedIndex = (int)vm.Record.UpLeftNeighbor;
+        UpNeighborBox.SelectedIndex = (int)vm.Record.UpNeighbor;
+        UpRightNeighborBox.SelectedIndex = (int)vm.Record.UpRightNeighbor;
+
+        // Fallback neighbors
+        RightFallbackBox.SelectedIndex = (int)vm.Record.RightFallback;
+        DownRightFallbackBox.SelectedIndex = (int)vm.Record.DownRightFallback;
+        DownFallbackBox.SelectedIndex = (int)vm.Record.DownFallback;
+        DownLeftFallbackBox.SelectedIndex = (int)vm.Record.DownLeftFallback;
+        LeftFallbackBox.SelectedIndex = (int)vm.Record.LeftFallback;
+        UpLeftFallbackBox.SelectedIndex = (int)vm.Record.UpLeftFallback;
+        UpFallbackBox.SelectedIndex = (int)vm.Record.UpFallback;
+        UpRightFallbackBox.SelectedIndex = (int)vm.Record.UpRightFallback;
+
+        // Prerequisites
         _prereqViewModels.Clear();
         foreach (var p in vm.Record.Prerequisites)
             _prereqViewModels.Add(new PrereqViewModel(p));
@@ -135,11 +163,28 @@ public partial class GeneralJobEditorControl : UserControl
         if (GjJobSelector.SelectedItem is not GeneralJobViewModel vm) return;
 
         vm.Record.Comment = CommentBox.Text?.Trim() ?? "";
-        vm.Record.RightNeighbor = (Job)RightNeighborBox.SelectedIndex;
-        vm.Record.DownNeighbor = (Job)DownNeighborBox.SelectedIndex;
-        vm.Record.LeftNeighbor = (Job)LeftNeighborBox.SelectedIndex;
-        vm.Record.UpNeighbor = (Job)UpNeighborBox.SelectedIndex;
 
+        // Primary neighbors
+        vm.Record.RightNeighbor = (Job)RightNeighborBox.SelectedIndex;
+        vm.Record.DownRightNeighbor = (Job)DownRightNeighborBox.SelectedIndex;
+        vm.Record.DownNeighbor = (Job)DownNeighborBox.SelectedIndex;
+        vm.Record.DownLeftNeighbor = (Job)DownLeftNeighborBox.SelectedIndex;
+        vm.Record.LeftNeighbor = (Job)LeftNeighborBox.SelectedIndex;
+        vm.Record.UpLeftNeighbor = (Job)UpLeftNeighborBox.SelectedIndex;
+        vm.Record.UpNeighbor = (Job)UpNeighborBox.SelectedIndex;
+        vm.Record.UpRightNeighbor = (Job)UpRightNeighborBox.SelectedIndex;
+
+        // Fallback neighbors
+        vm.Record.RightFallback = (Job)RightFallbackBox.SelectedIndex;
+        vm.Record.DownRightFallback = (Job)DownRightFallbackBox.SelectedIndex;
+        vm.Record.DownFallback = (Job)DownFallbackBox.SelectedIndex;
+        vm.Record.DownLeftFallback = (Job)DownLeftFallbackBox.SelectedIndex;
+        vm.Record.LeftFallback = (Job)LeftFallbackBox.SelectedIndex;
+        vm.Record.UpLeftFallback = (Job)UpLeftFallbackBox.SelectedIndex;
+        vm.Record.UpFallback = (Job)UpFallbackBox.SelectedIndex;
+        vm.Record.UpRightFallback = (Job)UpRightFallbackBox.SelectedIndex;
+
+        // Prerequisites
         vm.Record.Prerequisites.Clear();
         foreach (var pvm in _prereqViewModels)
             vm.Record.Prerequisites.Add(pvm.ToPrerequisite());
@@ -157,10 +202,27 @@ public partial class GeneralJobEditorControl : UserControl
         var def = defaults.First(d => d.Key == vm.Record.Key);
 
         vm.Record.Comment = def.Comment;
+
+        // Primary neighbors
         vm.Record.RightNeighbor = def.RightNeighbor;
+        vm.Record.DownRightNeighbor = def.DownRightNeighbor;
         vm.Record.DownNeighbor = def.DownNeighbor;
+        vm.Record.DownLeftNeighbor = def.DownLeftNeighbor;
         vm.Record.LeftNeighbor = def.LeftNeighbor;
+        vm.Record.UpLeftNeighbor = def.UpLeftNeighbor;
         vm.Record.UpNeighbor = def.UpNeighbor;
+        vm.Record.UpRightNeighbor = def.UpRightNeighbor;
+
+        // Fallback neighbors
+        vm.Record.RightFallback = def.RightFallback;
+        vm.Record.DownRightFallback = def.DownRightFallback;
+        vm.Record.DownFallback = def.DownFallback;
+        vm.Record.DownLeftFallback = def.DownLeftFallback;
+        vm.Record.LeftFallback = def.LeftFallback;
+        vm.Record.UpLeftFallback = def.UpLeftFallback;
+        vm.Record.UpFallback = def.UpFallback;
+        vm.Record.UpRightFallback = def.UpRightFallback;
+
         vm.Record.Prerequisites = [.. def.Prerequisites.Select(p => p.Clone())];
         vm.Record.RequiredJobExp = [.. def.RequiredJobExp];
 
@@ -185,7 +247,8 @@ public partial class GeneralJobEditorControl : UserControl
     private void ResetNeighbors_Click(object sender, RoutedEventArgs e)
     {
         var result = MessageBox.Show(
-            "Reset all cursor neighbors to their default values?\nThis will not affect prerequisites or other fields.",
+            "Reset all cursor neighbors (all 8 directions + fallbacks) to their default values?\n" +
+            "This will not affect prerequisites or other fields.",
             "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (result != MessageBoxResult.Yes) return;
 
@@ -193,10 +256,23 @@ public partial class GeneralJobEditorControl : UserControl
         foreach (var rec in _records)
         {
             var def = defaults.First(d => d.Key == rec.Key);
+
             rec.RightNeighbor = def.RightNeighbor;
+            rec.RightFallback = def.RightFallback;
+            rec.DownRightNeighbor = def.DownRightNeighbor;
+            rec.DownRightFallback = def.DownRightFallback;
             rec.DownNeighbor = def.DownNeighbor;
+            rec.DownFallback = def.DownFallback;
+            rec.DownLeftNeighbor = def.DownLeftNeighbor;
+            rec.DownLeftFallback = def.DownLeftFallback;
             rec.LeftNeighbor = def.LeftNeighbor;
+            rec.LeftFallback = def.LeftFallback;
+            rec.UpLeftNeighbor = def.UpLeftNeighbor;
+            rec.UpLeftFallback = def.UpLeftFallback;
             rec.UpNeighbor = def.UpNeighbor;
+            rec.UpFallback = def.UpFallback;
+            rec.UpRightNeighbor = def.UpRightNeighbor;
+            rec.UpRightFallback = def.UpRightFallback;
         }
 
         foreach (var vm in _viewModels)
