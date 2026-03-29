@@ -218,6 +218,7 @@ public partial class MainWindow : Window
             var records = GeneralJobEditor.GetRecords();
             var config = LayoutConfig.Export(uib, records, "Exported Layout");
             config.SaveToFile(dlg.FileName);
+            _hasUnexportedChanges = false;
             SetStatus($"Layout exported to {dlg.FileName}");
         }
         catch (Exception ex)
