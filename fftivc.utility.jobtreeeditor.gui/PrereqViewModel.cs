@@ -19,7 +19,7 @@ public class PrereqViewModel(JobPrerequisite prereq) : INotifyPropertyChanged
         get => (int)_prereq.RequiredJobId;
         set
         {
-            _prereq.RequiredJobId = (Job)value;
+            _prereq.RequiredJobId = (GeneralJobKey)value;
             OnPropertyChanged(nameof(RequiredJobIndex));
             OnPropertyChanged(nameof(RequiredJobDisplay));
         }

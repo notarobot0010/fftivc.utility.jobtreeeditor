@@ -208,34 +208,34 @@ public class LayoutConfig
             generalJob.RequiredJobExp = [.. entry.RequiredJobExp];
             generalJob.Prerequisites = [.. entry.Prerequisites.Select(p =>
                 new JobPrerequisite(
-                    (Job)p.JobKey,
+                    (GeneralJobKey)p.JobKey,
                     p.Level,
                     p.RequirementPosition
                 ))];
 
-            generalJob.RightNeighbor = (Job)entry.Neighbors.RightNeighbor;
-            generalJob.RightFallback = (Job)entry.Neighbors.RightFallback;
+            generalJob.RightNeighbor = (GeneralJobKey)entry.Neighbors.RightNeighbor;
+            generalJob.RightFallback = (GeneralJobKey)entry.Neighbors.RightFallback;
 
-            generalJob.DownRightNeighbor = (Job)entry.Neighbors.DownRightNeighbor;
-            generalJob.DownRightFallback = (Job)entry.Neighbors.UpRightFallback;
+            generalJob.DownRightNeighbor = (GeneralJobKey)entry.Neighbors.DownRightNeighbor;
+            generalJob.DownRightFallback = (GeneralJobKey)entry.Neighbors.UpRightFallback;
 
-            generalJob.DownNeighbor = (Job)entry.Neighbors.DownNeighbor;
-            generalJob.DownFallback = (Job)entry.Neighbors.DownFallback;
+            generalJob.DownNeighbor = (GeneralJobKey)entry.Neighbors.DownNeighbor;
+            generalJob.DownFallback = (GeneralJobKey)entry.Neighbors.DownFallback;
 
-            generalJob.DownLeftNeighbor = (Job)entry.Neighbors.DownLeftNeighbor;
-            generalJob.DownLeftFallback = (Job)entry.Neighbors.DownLeftFallback;
+            generalJob.DownLeftNeighbor = (GeneralJobKey)entry.Neighbors.DownLeftNeighbor;
+            generalJob.DownLeftFallback = (GeneralJobKey)entry.Neighbors.DownLeftFallback;
 
-            generalJob.LeftNeighbor = (Job)entry.Neighbors.LeftNeighbor;
-            generalJob.LeftFallback = (Job)entry.Neighbors.LeftFallback;
+            generalJob.LeftNeighbor = (GeneralJobKey)entry.Neighbors.LeftNeighbor;
+            generalJob.LeftFallback = (GeneralJobKey)entry.Neighbors.LeftFallback;
 
-            generalJob.UpLeftNeighbor = (Job)entry.Neighbors.UpLeftNeighbor;
-            generalJob.UpLeftFallback = (Job)entry.Neighbors.UpLeftFallback;
+            generalJob.UpLeftNeighbor = (GeneralJobKey)entry.Neighbors.UpLeftNeighbor;
+            generalJob.UpLeftFallback = (GeneralJobKey)entry.Neighbors.UpLeftFallback;
 
-            generalJob.UpNeighbor = (Job)entry.Neighbors.UpNeighbor;
-            generalJob.UpFallback = (Job)entry.Neighbors.UpFallback;
+            generalJob.UpNeighbor = (GeneralJobKey)entry.Neighbors.UpNeighbor;
+            generalJob.UpFallback = (GeneralJobKey)entry.Neighbors.UpFallback;
 
-            generalJob.UpRightNeighbor = (Job)entry.Neighbors.UpRightNeighbor;
-            generalJob.UpRightFallback = (Job)entry.Neighbors.UpRightFallback;
+            generalJob.UpRightNeighbor = (GeneralJobKey)entry.Neighbors.UpRightNeighbor;
+            generalJob.UpRightFallback = (GeneralJobKey)entry.Neighbors.UpRightFallback;
 
             applied.Add($"{entry.Key} - {entry.DisplayName}");
         }

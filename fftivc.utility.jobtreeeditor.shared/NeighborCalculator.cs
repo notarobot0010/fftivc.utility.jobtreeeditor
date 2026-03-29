@@ -12,10 +12,10 @@ public class NeighborCalculator
     /// After two jobs swap positions, update all neighbor references across all records.
     /// Every neighbor that pointed to jobA now points to jobB, and vice versa.
     /// </summary>
-    public static void SwapNeighborReferences(List<GeneralJobRecord> records, Job jobA, Job jobB)
+    public static void SwapNeighborReferences(List<GeneralJobRecord> records, GeneralJobKey jobA, GeneralJobKey jobB)
     {
-        var recA = records.First(r => (Job)r.Key == jobA);
-        var recB = records.First(r => (Job)r.Key == jobB);
+        var recA = records.First(r => (GeneralJobKey)r.Key == jobA);
+        var recB = records.First(r => (GeneralJobKey)r.Key == jobB);
 
         // Step 1: Swap the two jobs' own neighbor values
         var tempRight = recA.RightNeighbor;
@@ -44,7 +44,7 @@ public class NeighborCalculator
         }
     }
 
-    private static Job SwapValue(Job current, Job a, Job b)
+    private static GeneralJobKey SwapValue(GeneralJobKey current, GeneralJobKey a, GeneralJobKey b)
     {
         if (current == a) return b;
         if (current == b) return a;

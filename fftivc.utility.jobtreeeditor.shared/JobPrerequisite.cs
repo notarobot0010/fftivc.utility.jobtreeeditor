@@ -5,10 +5,10 @@ namespace fftivc.utility.jobtreeeditor.shared;
 /// <summary>
 /// A single prerequisite requirement: a job at a certain level, displayed in a certain position.
 /// </summary>
-public class JobPrerequisite(Job requiredJobId, int requiredLevel, LevelRequirementPosition levelRequirementPosition)
+public class JobPrerequisite(GeneralJobKey requiredJobId, int requiredLevel, LevelRequirementPosition levelRequirementPosition)
 {
     /// <summary>GeneralJob key of the required job.</summary>
-    public Job RequiredJobId { get; set; } = requiredJobId;
+    public GeneralJobKey RequiredJobId { get; set; } = requiredJobId;
 
     /// <summary>Level required in that job.</summary>
     public int RequiredLevel { get; set; } = requiredLevel;

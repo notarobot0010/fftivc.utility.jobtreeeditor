@@ -25,7 +25,7 @@ public partial class MainWindow : Window
 
         JobTreeEditor.JobsSwapped += (keyA, keyB) =>
         {
-            GeneralJobEditor.OnJobsSwapped((Job)keyA, (Job)keyB);
+            GeneralJobEditor.OnJobsSwapped((GeneralJobKey)keyA, (GeneralJobKey)keyB);
         };
 
         OutputPathBox.Text = Path.Combine(".", "output", "ffto_job_tree.uib");

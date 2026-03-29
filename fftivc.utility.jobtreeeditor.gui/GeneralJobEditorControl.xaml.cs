@@ -144,7 +144,7 @@ public partial class GeneralJobEditorControl : UserControl
     #endregion
 
     #region Edit Actions
-    public void OnJobsSwapped(Job jobA, Job jobB)
+    public void OnJobsSwapped(GeneralJobKey jobA, GeneralJobKey jobB)
     {
         NeighborCalculator.SwapNeighborReferences(_records, jobA, jobB);
 
@@ -165,24 +165,24 @@ public partial class GeneralJobEditorControl : UserControl
         vm.Record.Comment = CommentBox.Text?.Trim() ?? "";
 
         // Primary neighbors
-        vm.Record.RightNeighbor = (Job)RightNeighborBox.SelectedIndex;
-        vm.Record.DownRightNeighbor = (Job)DownRightNeighborBox.SelectedIndex;
-        vm.Record.DownNeighbor = (Job)DownNeighborBox.SelectedIndex;
-        vm.Record.DownLeftNeighbor = (Job)DownLeftNeighborBox.SelectedIndex;
-        vm.Record.LeftNeighbor = (Job)LeftNeighborBox.SelectedIndex;
-        vm.Record.UpLeftNeighbor = (Job)UpLeftNeighborBox.SelectedIndex;
-        vm.Record.UpNeighbor = (Job)UpNeighborBox.SelectedIndex;
-        vm.Record.UpRightNeighbor = (Job)UpRightNeighborBox.SelectedIndex;
+        vm.Record.RightNeighbor = (GeneralJobKey)RightNeighborBox.SelectedIndex;
+        vm.Record.DownRightNeighbor = (GeneralJobKey)DownRightNeighborBox.SelectedIndex;
+        vm.Record.DownNeighbor = (GeneralJobKey)DownNeighborBox.SelectedIndex;
+        vm.Record.DownLeftNeighbor = (GeneralJobKey)DownLeftNeighborBox.SelectedIndex;
+        vm.Record.LeftNeighbor = (GeneralJobKey)LeftNeighborBox.SelectedIndex;
+        vm.Record.UpLeftNeighbor = (GeneralJobKey)UpLeftNeighborBox.SelectedIndex;
+        vm.Record.UpNeighbor = (GeneralJobKey)UpNeighborBox.SelectedIndex;
+        vm.Record.UpRightNeighbor = (GeneralJobKey)UpRightNeighborBox.SelectedIndex;
 
         // Fallback neighbors
-        vm.Record.RightFallback = (Job)RightFallbackBox.SelectedIndex;
-        vm.Record.DownRightFallback = (Job)DownRightFallbackBox.SelectedIndex;
-        vm.Record.DownFallback = (Job)DownFallbackBox.SelectedIndex;
-        vm.Record.DownLeftFallback = (Job)DownLeftFallbackBox.SelectedIndex;
-        vm.Record.LeftFallback = (Job)LeftFallbackBox.SelectedIndex;
-        vm.Record.UpLeftFallback = (Job)UpLeftFallbackBox.SelectedIndex;
-        vm.Record.UpFallback = (Job)UpFallbackBox.SelectedIndex;
-        vm.Record.UpRightFallback = (Job)UpRightFallbackBox.SelectedIndex;
+        vm.Record.RightFallback = (GeneralJobKey)RightFallbackBox.SelectedIndex;
+        vm.Record.DownRightFallback = (GeneralJobKey)DownRightFallbackBox.SelectedIndex;
+        vm.Record.DownFallback = (GeneralJobKey)DownFallbackBox.SelectedIndex;
+        vm.Record.DownLeftFallback = (GeneralJobKey)DownLeftFallbackBox.SelectedIndex;
+        vm.Record.LeftFallback = (GeneralJobKey)LeftFallbackBox.SelectedIndex;
+        vm.Record.UpLeftFallback = (GeneralJobKey)UpLeftFallbackBox.SelectedIndex;
+        vm.Record.UpFallback = (GeneralJobKey)UpFallbackBox.SelectedIndex;
+        vm.Record.UpRightFallback = (GeneralJobKey)UpRightFallbackBox.SelectedIndex;
 
         // Prerequisites
         vm.Record.Prerequisites.Clear();
@@ -235,7 +235,7 @@ public partial class GeneralJobEditorControl : UserControl
     private void AddPrereq_Click(object sender, RoutedEventArgs e)
     {
         _prereqViewModels.Add(new PrereqViewModel(
-            new JobPrerequisite(Job.Squire, 2, LevelRequirementPosition.Bottom)));
+            new JobPrerequisite(GeneralJobKey.Squire, 2, LevelRequirementPosition.Bottom)));
     }
 
     private void RemovePrereq_Click(object sender, RoutedEventArgs e)

@@ -3,7 +3,7 @@
 /// <summary>
 /// GeneralJob key values mapped to English names.
 /// </summary>
-public enum Job
+public enum GeneralJobKey
 {
     Squire = 0,
     Chemist = 1,
