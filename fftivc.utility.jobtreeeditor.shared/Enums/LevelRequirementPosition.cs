@@ -10,6 +10,6 @@ public enum LevelRequirementPosition
     Right = 2,
     Bottom = 3,
     Top = 4,
-    Unknown5 = 5,
-    Unknown6 = 6,
+    BranchRight = 5,
+    BranchLeft = 6,
 }
