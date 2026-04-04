@@ -49,7 +49,7 @@ public static class JobNeedLevelGenerator
     /// </summary>
     private static readonly Dictionary<int, int> GeneralJobKeyToNeedLevelId = new()
     {
-        // Squire (Key 0) is omitted — it's always available
+        // Squire (Key 0) is omitted - it's always available
         { 1, 0 },   // Chemist -> NeedLevelId 0
         { 2, 1 },   // Knight -> NeedLevelId 1
         { 3, 2 },   // Archer -> NeedLevelId 2
